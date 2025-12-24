@@ -101,10 +101,10 @@ The fastest way to get started:
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd pchm
+cd aaa
 
 # Pull the Docker image
-docker pull hammadmunir959/pchm:latest
+docker pull hammadmunir959/aaa:latest
 
 # Create docker-compose.yml (see DOCKER_USAGE_GUIDE.md)
 # Create .env file with your configuration
@@ -125,7 +125,7 @@ For detailed Docker setup instructions, see [DOCKER_USAGE_GUIDE.md](./DOCKER_USA
 
 1. **Create project directory and files**:
    ```bash
-   mkdir pchm-project && cd pchm-project
+   mkdir aaa-project && cd aaa-project
    ```
 
 2. **Create `docker-compose.yml`** (see [DOCKER_USAGE_GUIDE.md](./DOCKER_USAGE_GUIDE.md) for complete configuration)
@@ -150,7 +150,7 @@ For detailed Docker setup instructions, see [DOCKER_USAGE_GUIDE.md](./DOCKER_USA
 
 4. **Start services**:
    ```bash
-   docker pull hammadmunir959/pchm:latest
+   docker pull hammadmunir959/aaa:latest
    docker compose up -d
    ```
 
@@ -166,7 +166,7 @@ For detailed Docker setup instructions, see [DOCKER_USAGE_GUIDE.md](./DOCKER_USA
 1. **Clone and navigate**:
    ```bash
    git clone <repository-url>
-   cd pchm/backend
+   cd aaa/backend
    ```
 
 2. **Create virtual environment**:
@@ -404,7 +404,7 @@ For complete API documentation, visit the Swagger UI at `/api/schema/swagger-ui/
 ## 📁 Project Structure
 
 ```
-pchm/
+aaa/
 ├── backend/                 # Django backend
 │   ├── accounts/            # User authentication
 │   ├── analytics/           # Analytics and tracking

@@ -44,7 +44,7 @@ def get_cache_key(prefix: str, *args, **kwargs) -> str:
     if len(key_string) > 200:
         key_string = hashlib.md5(key_string.encode()).hexdigest()
 
-    return f"pchm:{prefix}:{key_string}"
+    return f"aaa:{prefix}:{key_string}"
 
 
 def cache_result(timeout: int = CACHE_TIMEOUT_MEDIUM, key_prefix: Optional[str] = None):
@@ -177,22 +177,22 @@ class CacheManager:
     def invalidate_vehicle_cache(vehicle_id: Optional[int] = None) -> None:
         """Invalidate vehicle-related cache."""
         if vehicle_id:
-            cache.delete(f"pchm:vehicles:{vehicle_id}")
-        cache.delete("pchm:vehicles:list")
-        invalidate_cache_pattern("pchm:vehicles:*")
+            cache.delete(f"aaa:vehicles:{vehicle_id}")
+        cache.delete("aaa:vehicles:list")
+        invalidate_cache_pattern("aaa:vehicles:*")
 
     @staticmethod
     def invalidate_blog_cache(blog_id: Optional[int] = None) -> None:
         """Invalidate blog-related cache."""
         if blog_id:
-            cache.delete(f"pchm:blog:{blog_id}")
-        cache.delete("pchm:blog:list")
-        invalidate_cache_pattern("pchm:blog:*")
+            cache.delete(f"aaa:blog:{blog_id}")
+        cache.delete("aaa:blog:list")
+        invalidate_cache_pattern("aaa:blog:*")
 
     @staticmethod
     def invalidate_car_sales_cache(listing_id: Optional[int] = None) -> None:
         """Invalidate car sales cache."""
         if listing_id:
-            cache.delete(f"pchm:car_sales:{listing_id}")
-        cache.delete("pchm:car_sales:list")
-        invalidate_cache_pattern("pchm:car_sales:*")
+            cache.delete(f"aaa:car_sales:{listing_id}")
+        cache.delete("aaa:car_sales:list")
+        invalidate_cache_pattern("aaa:car_sales:*")

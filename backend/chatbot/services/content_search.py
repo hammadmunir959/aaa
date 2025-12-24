@@ -23,7 +23,7 @@ SEARCH_CACHE_PREFIX = "chatbot_content_search"
 
 def invalidate_content_search_cache() -> None:
     """Invalidate all content search cache entries"""
-    invalidate_cache_pattern(f"pchm:{SEARCH_CACHE_PREFIX}:*")
+    invalidate_cache_pattern(f"aaa:{SEARCH_CACHE_PREFIX}:*")
 
 
 def _execute_cached_content_search(
