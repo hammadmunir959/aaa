@@ -1,0 +1,68 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Inquiry Received - Admin Notification{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+    🔔 New Customer Inquiry
+</h2>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    A new inquiry has been submitted through the website. Please review and respond promptly.
+</p>
+
+<div
+    style="background-color: #fef9c3; border-left: 4px solid #eab308; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 15px 0; color: #854d0e; font-size: 14px; font-weight: 600;">
+        📝 Inquiry Details
+    </p>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 120px; vertical-align: top;">Name:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ inquiry.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; vertical-align: top;">Email:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">
+                <a href="mailto:{{ inquiry.email }}" style="color: #3d8ea7; text-decoration: none;">{{ inquiry.email
+                    }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; vertical-align: top;">Phone:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ inquiry.phone|default:"Not provided" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; vertical-align: top;">Subject:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ inquiry.subject }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; vertical-align: top;">Reference:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-family: 'Courier New', monospace;">#{{
+                inquiry.id }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;">
+        Message
+    </p>
+    <p style="margin: 0; color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">{{ inquiry.message
+        }}</p>
+</div>
+
+<div
+    style="background-color: #eff6ff; border-left: 4px solid #3d8ea7; padding: 15px; margin: 20px 0; border-radius: 6px;">
+    <p style="margin: 0; color: #1e40af; font-size: 14px;">
+        💡 <strong>Action Required:</strong> Please respond to this inquiry within 24 hours to maintain our service
+        standards.
+    </p>
+</div>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <p style="margin: 0; color: #64748b; font-size: 13px;">
+        This is an automated notification from {{ site_name }}.
+    </p>
+</div>
+{% endblock %}

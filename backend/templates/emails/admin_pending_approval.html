@@ -1,0 +1,72 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Admin Approval Request - AAA Accident Solutions LTD{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+  🔐 New Admin Access Request
+</h2>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+  A new administrator has completed email verification and is awaiting your approval to access the {{ site_name }} admin
+  dashboard.
+</p>
+
+<div
+  style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 25px 0; border-radius: 8px;">
+  <p style="margin: 0 0 15px 0; color: #92400e; font-size: 14px; font-weight: 600;">
+    👤 Applicant Details
+  </p>
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0; color: #78350f; font-size: 14px; width: 120px;">Name:</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ admin_name }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #78350f; font-size: 14px;">Email:</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">
+        <a href="mailto:{{ admin_email }}" style="color: #3d8ea7; text-decoration: none;">{{ admin_email }}</a>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #78350f; font-size: 14px;">Status:</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">
+        <span
+          style="background-color: #fbbf24; color: #78350f; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+          PENDING APPROVAL
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div
+  style="background-color: #eff6ff; border-left: 4px solid #3d8ea7; padding: 20px; margin: 25px 0; border-radius: 8px;">
+  <p style="margin: 0 0 10px 0; color: #1e40af; font-size: 14px; font-weight: 600;">
+    ⚡ Action Required
+  </p>
+  <p style="margin: 0 0 15px 0; color: #475569; font-size: 14px; line-height: 1.6;">
+    Please log in to the admin dashboard to review and approve or reject this request:
+  </p>
+  <div style="text-align: center; margin: 20px 0;">
+    <a href="https://aaa-as.co.uk/admin/user-management"
+      style="display: inline-block; background: linear-gradient(135deg, #3d8ea7 0%, #2563eb 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);">
+      Review Admin Request →
+    </a>
+  </div>
+</div>
+
+<div
+  style="background-color: #f1f5f9; border-left: 4px solid #64748b; padding: 15px; margin: 20px 0; border-radius: 6px;">
+  <p style="margin: 0; color: #475569; font-size: 13px;">
+    🔒 <strong>Security Note:</strong> Only approve admin access for trusted individuals. All admin actions are logged
+    and auditable.
+  </p>
+</div>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+  <p style="margin: 0; color: #64748b; font-size: 13px;">
+    This is an automated security notification from {{ site_name }}.
+  </p>
+</div>
+{% endblock %}

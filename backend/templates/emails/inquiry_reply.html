@@ -1,0 +1,49 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Response to Your Inquiry - AAA Accident Solutions LTD{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+  Re: {{ inquiry.subject }}
+</h2>
+
+<p style="margin: 0 0 15px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+  Dear {{ inquiry.name }},
+</p>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+  Thank you for your patience. We're writing in response to your inquiry (Reference: <strong>#{{ inquiry.id
+    }}</strong>).
+</p>
+
+<div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 25px; margin: 25px 0; border-radius: 8px;">
+  <p style="margin: 0 0 15px 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;">
+    Our Response
+  </p>
+  <div style="color: #1e293b; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">{{ reply_message }}</div>
+</div>
+
+<div
+  style="background-color: #eff6ff; border-left: 4px solid #3d8ea7; padding: 20px; margin: 25px 0; border-radius: 8px;">
+  <p style="margin: 0 0 10px 0; color: #1e40af; font-size: 14px; font-weight: 600;">
+    💬 Need Further Assistance?
+  </p>
+  <p style="margin: 0; color: #475569; font-size: 14px; line-height: 1.6;">
+    If you have any follow-up questions or need additional information, please don't hesitate to reply to this email or
+    contact us directly.
+  </p>
+</div>
+
+<p style="margin: 20px 0 0 0; color: #64748b; font-size: 14px; line-height: 1.6;">
+  We appreciate your interest in {{ site_name }} and look forward to serving you.
+</p>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+  <p style="margin: 0; color: #475569; font-size: 14px; font-weight: 600;">
+    Best regards,
+  </p>
+  <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">
+    The {{ site_name }} Team
+  </p>
+</div>
+{% endblock %}

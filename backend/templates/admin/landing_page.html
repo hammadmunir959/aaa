@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard - AAA Accident Solutions LTD{% endblock %}</title>
+
+    <!-- Django Admin CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/nav_sidebar.css' %}">
+
+    <!-- Custom styles for our admin dashboard -->
+    <style>
+        .dashboard-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-card h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #417690;
+            padding-bottom: 10px;
+        }
+
+        .dashboard-card .card-content {
+            margin-top: 15px;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            background: #417690;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 5px 5px 5px 0;
+            transition: background-color 0.3s;
+        }
+
+        .dashboard-link:hover {
+            background: #205067;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #417690;
+            margin: 10px 0;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #417690 0%, #205067 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <!-- Header -->
+        <div id="header">
+            <div id="branding">
+                <h1 id="site-name">
+                    <a href="{% url 'admin-landing' %}">AAA Accident Solutions LTD Admin Dashboard</a>
+                </h1>
+            </div>
+            <div id="user-tools">
+                <span>Welcome, <strong>{% firstof user.get_full_name user.get_username %}</strong></span>
+                <span class="user-links">
+                    <a href="{% url 'admin:password_change' %}">Change password</a> /
+                    <a href="{% url 'admin:logout' %}">Log out</a>
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div id="nav-sidebar">
+            <div id="nav">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
+                    <li><a href="/api/schema/swagger-ui/">API Documentation</a></li>
+                    <li><a href="/api/schema/redoc/">API Docs (ReDoc)</a></li>
+                    <li><a href="/health/">System Health</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content" class="colM">
+            <div id="content-main">
+
+                <!-- Welcome Message -->
+                <div class="welcome-message">
+                    <h2>Welcome to AAA Accident Solutions LTD Admin Dashboard</h2>
+                    <p>Manage your car rental platform efficiently with quick access to all administrative functions.
+                    </p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>System Status</h4>
+                        <div class="stat-number">✓</div>
+                        <p>All systems operational</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>API Status</h4>
+                        <div class="stat-number">✓</div>
+                        <p>REST API responding</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Frontend Status</h4>
+                        <div class="stat-number">✓</div>
+                        <p>SPA application loaded</p>
+                    </div>
+                </div>
+
+                <!-- Management Cards -->
+                <div class="dashboard-card">
+                    <h3>Content Management</h3>
+                    <div class="card-content">
+                        <a href="{% url 'admin:blog_blogpost_changelist' %}" class="dashboard-link">Blog Posts</a>
+                        <a href="{% url 'admin:cms_landingpageconfig_changelist' %}" class="dashboard-link">Landing Page
+                            Config</a>
+                        <a href="{% url 'admin:cms_teammember_changelist' %}" class="dashboard-link">Team Members</a>
+                        <a href="{% url 'admin:testimonials_testimonial_changelist' %}"
+                            class="dashboard-link">Testimonials</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Car Sales & Inquiries</h3>
+                    <div class="card-content">
+                        <a href="{% url 'admin:car_sales_carlisting_changelist' %}" class="dashboard-link">Car
+                            Listings</a>
+                        <a href="{% url 'admin:car_sales_carpurchaserequest_changelist' %}"
+                            class="dashboard-link">Purchase Requests</a>
+                        <a href="{% url 'admin:car_sales_carsellrequest_changelist' %}" class="dashboard-link">Sell
+                            Requests</a>
+                        <a href="{% url 'admin:inquiries_inquiry_changelist' %}" class="dashboard-link">Inquiries</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Chatbot & Analytics</h3>
+                    <div class="card-content">
+                        <a href="{% url 'admin:chatbot_conversation_changelist' %}"
+                            class="dashboard-link">Conversations</a>
+                        <a href="{% url 'admin:chatbot_chatbotsettings_changelist' %}" class="dashboard-link">Chatbot
+                            Settings</a>
+                        <a href="{% url 'admin:hitcount_hitcount_changelist' %}" class="dashboard-link">Page Views</a>
+                        <a href="{% url 'admin:theming_theme_changelist' %}" class="dashboard-link">Themes</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>System & Configuration</h3>
+                    <div class="card-content">
+                        <a href="{% url 'admin:theming_theme_changelist' %}" class="dashboard-link">Themes</a>
+                        <a href="{% url 'admin:theming_event_changelist' %}" class="dashboard-link">Theme Events</a>
+                        <a href="{% url 'admin:chatbot_chatbotsettings_changelist' %}" class="dashboard-link">Chatbot
+                            Settings</a>
+                        <a href="/django-admin/" class="dashboard-link">Django Admin Panel</a>
+                    </div>
+                </div>
+
+                <!-- Developer Tools -->
+                <div class="dashboard-card">
+                    <h3>Developer Tools</h3>
+                    <div class="card-content">
+                        <a href="/api/schema/swagger-ui/" class="dashboard-link" target="_blank">API Documentation</a>
+                        <a href="/api/schema/redoc/" class="dashboard-link" target="_blank">API Docs (ReDoc)</a>
+                        <a href="/health/" class="dashboard-link">Health Check</a>
+                        <a href="/ready/" class="dashboard-link">Readiness Check</a>
+                        <a href="/live/" class="dashboard-link">Liveness Check</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+            <p>&copy; 2025 AAA Accident Solutions LTD. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Django Admin JS -->
+    <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/nav_sidebar.js' %}"></script>
+</body>
+
+</html>

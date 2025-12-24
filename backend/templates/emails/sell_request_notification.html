@@ -1,0 +1,93 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Sell Request - Admin Notification{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+    🚗 New Vehicle Sell Request
+</h2>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    A customer wants to sell their vehicle to us. Please review the details and contact them to arrange an inspection.
+</p>
+
+<div
+    style="background-color: #fef9c3; border-left: 4px solid #eab308; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 15px 0; color: #854d0e; font-size: 14px; font-weight: 600;">
+        🚙 Vehicle Details
+    </p>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 140px;">Make & Model:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ request.make }} {{
+                request.model }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Year:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ request.year }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Mileage:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ request.mileage|default:"Not specified" }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Condition:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ request.condition|default:"Not specified" }}
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div
+    style="background-color: #eff6ff; border-left: 4px solid #3d8ea7; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 15px 0; color: #1e40af; font-size: 14px; font-weight: 600;">
+        👤 Seller Information
+    </p>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 140px;">Name:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ request.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Email:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">
+                <a href="mailto:{{ request.email|default:'Not provided' }}"
+                    style="color: #3d8ea7; text-decoration: none;">{{ request.email|default:"Not provided" }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Phone:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ request.phone }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Reference:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-family: 'Courier New', monospace;">#{{
+                request.id }}</td>
+        </tr>
+    </table>
+</div>
+
+{% if request.description %}
+<div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;">
+        Additional Information
+    </p>
+    <p style="margin: 0; color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">{{
+        request.description }}</p>
+</div>
+{% endif %}
+
+<div
+    style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0; border-radius: 6px;">
+    <p style="margin: 0; color: #991b1b; font-size: 14px;">
+        ⚡ <strong>Action Required:</strong> Contact the seller within 24-48 hours to arrange a vehicle inspection.
+    </p>
+</div>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <p style="margin: 0; color: #64748b; font-size: 13px;">
+        This is an automated notification from {{ site_name }}.
+    </p>
+</div>
+{% endblock %}

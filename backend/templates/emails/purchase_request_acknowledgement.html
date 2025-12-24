@@ -1,0 +1,69 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Purchase Request Received - AAA Accident Solutions LTD{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+    Thank You for Your Purchase Interest
+</h2>
+
+<p style="margin: 0 0 15px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    Dear {{ request.name }},
+</p>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    Thank you for your interest in purchasing a vehicle from <strong>{{ site_name }}</strong>. We have successfully
+    received your purchase request and our sales team will contact you shortly.
+</p>
+
+<div
+    style="background-color: #f0fdf4; border-left: 4px solid #22c55e; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 15px 0; color: #166534; font-size: 14px; font-weight: 600;">
+        ✓ Request Confirmed
+    </p>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 140px;">Vehicle:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{{ request.vehicle.make }} {{
+                request.vehicle.model }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Reference Number:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-family: 'Courier New', monospace;">#{{
+                request.id }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Your Contact:</td>
+            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{{ request.email }}</td>
+        </tr>
+    </table>
+</div>
+
+<div
+    style="background-color: #eff6ff; border-left: 4px solid #3d8ea7; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0 0 10px 0; color: #1e40af; font-size: 14px; font-weight: 600;">
+        📋 Next Steps
+    </p>
+    <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8;">
+        <li>Our sales team will review your request within 24 hours</li>
+        <li>We'll contact you to discuss pricing and financing options</li>
+        <li>Schedule a viewing or test drive if desired</li>
+        <li>Complete the purchase documentation</li>
+    </ul>
+</div>
+
+<p style="margin: 20px 0 0 0; color: #64748b; font-size: 14px; line-height: 1.6;">
+    If you need immediate assistance or have any questions, please don't hesitate to contact us at <a
+        href="mailto:info@aaa-as.co.uk"
+        style="color: #3d8ea7; text-decoration: none;">info@aaa-as.co.uk</a>.
+</p>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <p style="margin: 0; color: #475569; font-size: 14px; font-weight: 600;">
+        Best regards,
+    </p>
+    <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">
+        The {{ site_name }} Sales Team
+    </p>
+</div>
+{% endblock %}

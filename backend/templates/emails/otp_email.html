@@ -1,0 +1,51 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Email Verification Code - AAA Accident Solutions LTD{% endblock %}
+
+{% block content %}
+<h2 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 600;">
+    Verify Your Email Address
+</h2>
+
+<p style="margin: 0 0 15px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    Hello,
+</p>
+
+<p style="margin: 0 0 20px 0; color: #475569; font-size: 15px; line-height: 1.6;">
+    Thank you for registering with <strong>{{ site_name }}</strong>. To complete your registration, please use the
+    verification code below:
+</p>
+
+<div
+    style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 4px solid #3d8ea7; padding: 25px; text-align: center; margin: 25px 0; border-radius: 8px;">
+    <p
+        style="margin: 0 0 10px 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+        Your Verification Code
+    </p>
+    <div
+        style="font-size: 36px; font-weight: 700; color: #1e40af; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+        {{ otp_code }}
+    </div>
+</div>
+
+<div
+    style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 6px;">
+    <p style="margin: 0; color: #92400e; font-size: 14px;">
+        ⏱️ <strong>Important:</strong> This code will expire in <strong>10 minutes</strong>.
+    </p>
+</div>
+
+<p style="margin: 20px 0 0 0; color: #64748b; font-size: 14px; line-height: 1.6;">
+    If you didn't request this verification code, please ignore this email or contact our support team if you have
+    concerns.
+</p>
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <p style="margin: 0; color: #475569; font-size: 14px; font-weight: 600;">
+        Best regards,
+    </p>
+    <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">
+        The {{ site_name }} Team
+    </p>
+</div>
+{% endblock %}
