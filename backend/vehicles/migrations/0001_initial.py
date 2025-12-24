@@ -7,25 +7,57 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Vehicle',
+            name="Vehicle",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('type', models.CharField(choices=[('sedan', 'Sedan'), ('suv', 'SUV'), ('hatch', 'Hatch'), ('van', 'Van')], max_length=20)),
-                ('registration', models.CharField(max_length=20, unique=True)),
-                ('status', models.CharField(choices=[('available', 'Available'), ('booked', 'Booked'), ('maintenance', 'Maintenance')], default='available', max_length=20)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='vehicles/')),
-                ('description', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("sedan", "Sedan"),
+                            ("suv", "SUV"),
+                            ("hatch", "Hatch"),
+                            ("van", "Van"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("registration", models.CharField(max_length=20, unique=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("available", "Available"),
+                            ("booked", "Booked"),
+                            ("maintenance", "Maintenance"),
+                        ],
+                        default="available",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(blank=True, null=True, upload_to="vehicles/"),
+                ),
+                ("description", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

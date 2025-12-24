@@ -7,30 +7,50 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('newsletter', '0001_initial'),
+        ("newsletter", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NewsletterRecipient',
+            name="NewsletterRecipient",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.EmailField(max_length=254)),
-                ('token', models.CharField(max_length=255, unique=True)),
-                ('is_test', models.BooleanField(default=False)),
-                ('open_count', models.IntegerField(default=0)),
-                ('click_count', models.IntegerField(default=0)),
-                ('first_opened_at', models.DateTimeField(blank=True, null=True)),
-                ('last_opened_at', models.DateTimeField(blank=True, null=True)),
-                ('first_clicked_at', models.DateTimeField(blank=True, null=True)),
-                ('last_clicked_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipients', to='newsletter.newslettercampaign')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
+                ("token", models.CharField(max_length=255, unique=True)),
+                ("is_test", models.BooleanField(default=False)),
+                ("open_count", models.IntegerField(default=0)),
+                ("click_count", models.IntegerField(default=0)),
+                ("first_opened_at", models.DateTimeField(blank=True, null=True)),
+                ("last_opened_at", models.DateTimeField(blank=True, null=True)),
+                ("first_clicked_at", models.DateTimeField(blank=True, null=True)),
+                ("last_clicked_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="recipients",
+                        to="newsletter.newslettercampaign",
+                    ),
+                ),
             ],
             options={
-                'indexes': [models.Index(fields=['campaign', 'email'], name='newsletter__campaig_de5ca1_idx')],
-                'unique_together': {('campaign', 'email')},
+                "indexes": [
+                    models.Index(
+                        fields=["campaign", "email"],
+                        name="newsletter__campaig_de5ca1_idx",
+                    )
+                ],
+                "unique_together": {("campaign", "email")},
             },
         ),
     ]

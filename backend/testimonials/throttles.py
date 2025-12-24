@@ -9,16 +9,17 @@ class TestimonialSubmissionThrottle(BaseThrottle):
     Custom throttle for testimonial submissions.
     Allows max 2 submissions per hour per IP address.
     """
-    rate = '2/hour'  # For documentation, actual logic is in allow_request
-    scope = 'testimonial_submission'
+
+    rate = "2/hour"  # For documentation, actual logic is in allow_request
+    scope = "testimonial_submission"
 
     def get_ident(self, request):
         """Get IP address from request"""
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0].strip()
+            ip = x_forwarded_for.split(",")[0].strip()
         else:
-            ip = request.META.get('REMOTE_ADDR', '')
+            ip = request.META.get("REMOTE_ADDR", "")
         return ip
 
     def allow_request(self, request, view):
@@ -39,13 +40,12 @@ class TestimonialSubmissionThrottle(BaseThrottle):
         try:
             submission_times = cache.get(cache_key, [])
         except Exception:
-             # If cache is down, allow request (fail open)
+            # If cache is down, allow request (fail open)
             return True
 
         # Filter out submissions outside the 1-hour window
         submission_times = [
-            timestamp for timestamp in submission_times
-            if timestamp > window_start
+            timestamp for timestamp in submission_times if timestamp > window_start
         ]
 
         # Check if limit exceeded
@@ -60,17 +60,16 @@ class TestimonialSubmissionThrottle(BaseThrottle):
         try:
             cache.set(cache_key, submission_times, 3600)
         except Exception:
-            pass # Fail silently if cache is down
+            pass  # Fail silently if cache is down
 
         return True
 
     def wait(self):
         """Return how long to wait before next request (in seconds)"""
         # Calculate remaining time until the oldest submission expires
-        if hasattr(self, 'oldest_submission'):
+        if hasattr(self, "oldest_submission"):
             now = timezone.now()
             window_end = self.oldest_submission + timedelta(hours=1)
             wait_seconds = max(0, (window_end - now).total_seconds())
             return int(wait_seconds)
         return 3600  # Default: 1 hour in seconds
-

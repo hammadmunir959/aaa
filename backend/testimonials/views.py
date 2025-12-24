@@ -12,23 +12,25 @@ from utils.throttles import SafeAnonRateThrottle, SafeUserRateThrottle
 
 
 class TestimonialViewSet(viewsets.ModelViewSet):
-    queryset = Testimonial.objects.all().order_by('-created_at')
+    queryset = Testimonial.objects.all().order_by("-created_at")
     filter_backends = []
 
     def get_serializer_class(self):
         # Admins use the full serializer (no captcha, can set status)
-        if self.request.user and (self.request.user.is_staff or self.request.user.is_superuser):
+        if self.request.user and (
+            self.request.user.is_staff or self.request.user.is_superuser
+        ):
             return TestimonialSerializer
-            
-        if self.action in ['create', 'update', 'partial_update']:
+
+        if self.action in ["create", "update", "partial_update"]:
             return TestimonialCreateSerializer
         return TestimonialSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             # Public can view approved testimonials
             permission_classes = [IsPublicOrAdmin]
-        elif self.action == 'create':
+        elif self.action == "create":
             # Public can create testimonials (with rate limiting)
             permission_classes = [AllowAny]
         else:
@@ -38,23 +40,23 @@ class TestimonialViewSet(viewsets.ModelViewSet):
 
     def get_throttles(self):
         """Apply rate limiting only for create action"""
-        if self.action == 'create':
+        if self.action == "create":
             return [TestimonialSubmissionThrottle()]
         # Use safe throttles for other actions to prevent crashes when Redis is down
         return [SafeAnonRateThrottle(), SafeUserRateThrottle()]
 
     def get_queryset(self):
-        queryset = Testimonial.objects.all().order_by('-created_at')
+        queryset = Testimonial.objects.all().order_by("-created_at")
         # Public users only see approved testimonials
-        if self.action == 'list' and not self.request.user.is_authenticated:
-            queryset = queryset.filter(status='approved')
-        
+        if self.action == "list" and not self.request.user.is_authenticated:
+            queryset = queryset.filter(status="approved")
+
         # Optimize for list views
-        if self.action == 'list':
+        if self.action == "list":
             queryset = queryset.only(
-                'id', 'name', 'rating', 'feedback', 'status', 'created_at'
+                "id", "name", "rating", "feedback", "status", "created_at"
             )
-        
+
         return queryset
 
     @cache_api_response(timeout=90)  # Cache for 90 seconds
@@ -65,42 +67,42 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Override create to ensure status is always 'approved' (published) for public submissions"""
         # Remove status from request data for public submissions (it will be set to approved by serializer)
-        if not request.user.is_authenticated and 'status' in request.data:
-            request.data.pop('status')
+        if not request.user.is_authenticated and "status" in request.data:
+            request.data.pop("status")
         return super().create(request, *args, **kwargs)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdmin])
+    @action(detail=True, methods=["patch"], permission_classes=[IsAdmin])
     def approve(self, request, pk=None):
         """Approve/publish a testimonial"""
         testimonial = self.get_object()
-        testimonial.status = 'approved'
-        testimonial.save(update_fields=['status'])
+        testimonial.status = "approved"
+        testimonial.save(update_fields=["status"])
         serializer = self.get_serializer(testimonial)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdmin])
+    @action(detail=True, methods=["patch"], permission_classes=[IsAdmin])
     def reject(self, request, pk=None):
         """Reject a testimonial"""
         testimonial = self.get_object()
-        testimonial.status = 'rejected'
-        testimonial.save(update_fields=['status'])
+        testimonial.status = "rejected"
+        testimonial.save(update_fields=["status"])
         serializer = self.get_serializer(testimonial)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdmin])
+    @action(detail=True, methods=["patch"], permission_classes=[IsAdmin])
     def publish(self, request, pk=None):
         """Publish a testimonial (same as approve)"""
         testimonial = self.get_object()
-        testimonial.status = 'approved'
-        testimonial.save(update_fields=['status'])
+        testimonial.status = "approved"
+        testimonial.save(update_fields=["status"])
         serializer = self.get_serializer(testimonial)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdmin])
+    @action(detail=True, methods=["patch"], permission_classes=[IsAdmin])
     def archive(self, request, pk=None):
         """Archive a testimonial"""
         testimonial = self.get_object()
-        testimonial.status = 'archived'
-        testimonial.save(update_fields=['status'])
+        testimonial.status = "archived"
+        testimonial.save(update_fields=["status"])
         serializer = self.get_serializer(testimonial)
         return Response(serializer.data)

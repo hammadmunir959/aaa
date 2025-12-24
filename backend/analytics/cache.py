@@ -15,4 +15,3 @@ def invalidate_dashboard_summary_cache() -> None:
 def invalidate_booking_trends_cache() -> None:
     """Clear cached booking trends data."""
     cache.delete(get_cache_key(BOOKING_TRENDS_CACHE_PREFIX))
-

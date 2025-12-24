@@ -4,25 +4,26 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
 
+
 class User(AbstractUser):
     """Custom user model with admin roles and workflow status."""
 
-    ROLE_SUPER_ADMIN = 'super_admin'
-    ROLE_ADMIN = 'admin'
+    ROLE_SUPER_ADMIN = "super_admin"
+    ROLE_ADMIN = "admin"
 
     ROLE_CHOICES = [
-        (ROLE_SUPER_ADMIN, 'Super Admin'),
-        (ROLE_ADMIN, 'Admin'),
+        (ROLE_SUPER_ADMIN, "Super Admin"),
+        (ROLE_ADMIN, "Admin"),
     ]
 
-    STATUS_ACTIVE = 'active'
-    STATUS_PENDING = 'pending_approval'
-    STATUS_SUSPENDED = 'suspended'
+    STATUS_ACTIVE = "active"
+    STATUS_PENDING = "pending_approval"
+    STATUS_SUSPENDED = "suspended"
 
     STATUS_CHOICES = [
-        (STATUS_ACTIVE, 'Active'),
-        (STATUS_PENDING, 'Pending Approval'),
-        (STATUS_SUSPENDED, 'Suspended'),
+        (STATUS_ACTIVE, "Active"),
+        (STATUS_PENDING, "Pending Approval"),
+        (STATUS_SUSPENDED, "Suspended"),
     ]
 
     admin_type = models.CharField(
@@ -30,13 +31,13 @@ class User(AbstractUser):
         choices=ROLE_CHOICES,
         null=True,
         blank=True,
-        help_text="Role assigned to the user within the admin workflow."
+        help_text="Role assigned to the user within the admin workflow.",
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default=STATUS_PENDING,
-        help_text="Workflow status controlling dashboard access."
+        help_text="Workflow status controlling dashboard access.",
     )
     phone = models.CharField(max_length=20, blank=True)
     is_email_verified = models.BooleanField(default=False)
@@ -46,9 +47,9 @@ class User(AbstractUser):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['admin_type'],
-                condition=Q(admin_type='super_admin'),
-                name='unique_super_admin_user'
+                fields=["admin_type"],
+                condition=Q(admin_type="super_admin"),
+                name="unique_super_admin_user",
             )
         ]
 
@@ -67,8 +68,10 @@ class User(AbstractUser):
     def is_admin(self) -> bool:
         return self.admin_type in {self.ROLE_ADMIN, self.ROLE_SUPER_ADMIN}
 
+
 class OTPVerification(models.Model):
     """OTP for email verification and password reset"""
+
     email = models.EmailField()
     otp_code = models.CharField(max_length=6)
     purpose = models.CharField(max_length=20)  # 'verification', 'password_reset'
@@ -77,4 +80,4 @@ class OTPVerification(models.Model):
     expires_at = models.DateTimeField()
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]

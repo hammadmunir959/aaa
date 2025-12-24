@@ -6,19 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chatbot', '0005_rename_chatbot_con_is_lead_c_ac5a0a_idx_chatbot_con_is_lead_ec48fb_idx_and_more'),
+        (
+            "chatbot",
+            "0005_rename_chatbot_con_is_lead_c_ac5a0a_idx_chatbot_con_is_lead_ec48fb_idx_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='chatbotsettings',
-            name='openrouter_api_key',
-            field=models.CharField(blank=True, help_text='OpenRouter API Key (leave empty to use environment variable OPENROUTER_API_KEY)', max_length=500),
+            model_name="chatbotsettings",
+            name="openrouter_api_key",
+            field=models.CharField(
+                blank=True,
+                help_text="OpenRouter API Key (leave empty to use environment variable OPENROUTER_API_KEY)",
+                max_length=500,
+            ),
         ),
         migrations.AddField(
-            model_name='chatbotsettings',
-            name='openrouter_model',
-            field=models.CharField(blank=True, help_text='OpenRouter model to use for chatbot responses (e.g., openai/gpt-4o-mini, anthropic/claude-3.5-sonnet)', max_length=200),
+            model_name="chatbotsettings",
+            name="openrouter_model",
+            field=models.CharField(
+                blank=True,
+                help_text="OpenRouter model to use for chatbot responses (e.g., openai/gpt-4o-mini, anthropic/claude-3.5-sonnet)",
+                max_length=200,
+            ),
         ),
     ]
-

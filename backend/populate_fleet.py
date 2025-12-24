@@ -4,7 +4,7 @@ from django.core.files import File
 from django.conf import settings
 
 # Setup Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from vehicles.models import Vehicle
@@ -24,7 +24,7 @@ fleet_data = [
         "type": "sedan",
         "daily_rate": 150.00,
         "seats": 5,
-        "registration": "MB-E300-01"
+        "registration": "MB-E300-01",
     },
     {
         "manufacturer": "Mercedes-Benz",
@@ -40,7 +40,7 @@ fleet_data = [
         "type": "sedan",
         "daily_rate": 120.00,
         "seats": 5,
-        "registration": "MB-E200-02"
+        "registration": "MB-E200-02",
     },
     {
         "manufacturer": "Audi",
@@ -56,7 +56,7 @@ fleet_data = [
         "type": "limousine",
         "daily_rate": 200.00,
         "seats": 5,
-        "registration": "AU-A800-03"
+        "registration": "AU-A800-03",
     },
     {
         "manufacturer": "Mercedes-Benz",
@@ -72,7 +72,7 @@ fleet_data = [
         "type": "convertible",
         "daily_rate": 130.00,
         "seats": 4,
-        "registration": "MB-C200-04"
+        "registration": "MB-C200-04",
     },
     {
         "manufacturer": "Land Rover",
@@ -88,7 +88,7 @@ fleet_data = [
         "type": "suv",
         "daily_rate": 160.00,
         "seats": 7,
-        "registration": "LR-DISC-05"
+        "registration": "LR-DISC-05",
     },
     {
         "manufacturer": "Land Rover",
@@ -104,7 +104,7 @@ fleet_data = [
         "type": "suv",
         "daily_rate": 180.00,
         "seats": 5,
-        "registration": "LR-RRS-06"
+        "registration": "LR-RRS-06",
     },
     {
         "manufacturer": "Volkswagen",
@@ -120,7 +120,7 @@ fleet_data = [
         "type": "suv",
         "daily_rate": 90.00,
         "seats": 5,
-        "registration": "VW-TIG-07"
+        "registration": "VW-TIG-07",
     },
     {
         "manufacturer": "Mercedes-Benz",
@@ -128,7 +128,7 @@ fleet_data = [
         "model_detail": "—",
         "color": "—",
         "body_style": "MPV",
-        "fuel_type": "diesel", # Defaulting to diesel for V-Class
+        "fuel_type": "diesel",  # Defaulting to diesel for V-Class
         "engine_size": "—",
         "euro_status": "—",
         "registered_year_date": "Year 2025",
@@ -136,7 +136,7 @@ fleet_data = [
         "type": "mpv",
         "daily_rate": 150.00,
         "seats": 7,
-        "registration": "MB-VCLS-08"
+        "registration": "MB-VCLS-08",
     },
     {
         "manufacturer": "Mercedes-Benz",
@@ -144,7 +144,7 @@ fleet_data = [
         "model_detail": "—",
         "color": "—",
         "body_style": "Saloon",
-        "fuel_type": "hybrid_electric", # Default/Guess
+        "fuel_type": "hybrid_electric",  # Default/Guess
         "engine_size": "—",
         "euro_status": "—",
         "registered_year_date": "Year 2023",
@@ -152,7 +152,7 @@ fleet_data = [
         "type": "sedan",
         "daily_rate": 250.00,
         "seats": 5,
-        "registration": "MB-SCLS-09"
+        "registration": "MB-SCLS-09",
     },
     {
         "manufacturer": "Kia",
@@ -168,17 +168,19 @@ fleet_data = [
         "type": "suv",
         "daily_rate": 80.00,
         "seats": 5,
-        "registration": "KIA-NIR-10"
-    }
+        "registration": "KIA-NIR-10",
+    },
 ]
 
 # Determine image source directory based on environment
 # In Docker (prod), images are in ./frontend_dist (copied from frontend-builder)
 # In Local Dev, images are in ../frontend/public
 possible_paths = [
-    os.path.join(settings.BASE_DIR, 'frontend_dist'),          # Docker / Prod
-    os.path.join(settings.BASE_DIR, '../frontend/public'),     # Local Dev relative to backend
-    "/app/backend/frontend_dist",                              # Docker absolute
+    os.path.join(settings.BASE_DIR, "frontend_dist"),  # Docker / Prod
+    os.path.join(
+        settings.BASE_DIR, "../frontend/public"
+    ),  # Local Dev relative to backend
+    "/app/backend/frontend_dist",  # Docker absolute
 ]
 
 IMAGE_SOURCE_DIR = None
@@ -190,38 +192,40 @@ for path in possible_paths:
 if not IMAGE_SOURCE_DIR:
     print("Warning: Could not find image source directory. Tried:", possible_paths)
     # Default to current dir or raise error? Let's assume current dir to avoid crash
-    IMAGE_SOURCE_DIR = "." 
+    IMAGE_SOURCE_DIR = "."
 else:
     print(f"Using image source directory: {IMAGE_SOURCE_DIR}")
 
 for data in fleet_data:
     vehicle, created = Vehicle.objects.get_or_create(
-        registration=data['registration'],
+        registration=data["registration"],
         defaults={
-            'name': f"{data['manufacturer']} {data['model']}",
-            'manufacturer': data['manufacturer'],
-            'model': data['model'],
-            'model_detail': data['model_detail'],
-            'color': data['color'],
-            'body_style': data['body_style'],
-            'fuel_type': data['fuel_type'],
-            'engine_size': data['engine_size'],
-            'euro_status': data['euro_status'],
-            'registered_year_date': data['registered_year_date'],
-            'type': data['type'],
-            'daily_rate': data['daily_rate'],
-            'seats': data['seats'],
-            'status': 'available'
-        }
+            "name": f"{data['manufacturer']} {data['model']}",
+            "manufacturer": data["manufacturer"],
+            "model": data["model"],
+            "model_detail": data["model_detail"],
+            "color": data["color"],
+            "body_style": data["body_style"],
+            "fuel_type": data["fuel_type"],
+            "engine_size": data["engine_size"],
+            "euro_status": data["euro_status"],
+            "registered_year_date": data["registered_year_date"],
+            "type": data["type"],
+            "daily_rate": data["daily_rate"],
+            "seats": data["seats"],
+            "status": "available",
+        },
     )
-    
+
     if created or not vehicle.image:
-        image_path = os.path.join(IMAGE_SOURCE_DIR, data['image_filename'].lstrip('/'))
+        image_path = os.path.join(IMAGE_SOURCE_DIR, data["image_filename"].lstrip("/"))
         if os.path.exists(image_path):
-            with open(image_path, 'rb') as img_file:
-                vehicle.image.save(data['image_filename'], File(img_file), save=True)
+            with open(image_path, "rb") as img_file:
+                vehicle.image.save(data["image_filename"], File(img_file), save=True)
             print(f"Created/Updated {vehicle.name} with image.")
         else:
-            print(f"Created/Updated {vehicle.name} without image (image not found at {image_path}).")
+            print(
+                f"Created/Updated {vehicle.name} without image (image not found at {image_path})."
+            )
     else:
         print(f"Skipped {vehicle.name} (already exists).")

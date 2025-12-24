@@ -6,85 +6,89 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('theming', '0004_theme_is_active'),
+        ("theming", "0004_theme_is_active"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='theme',
-            name='accent_color',
+            model_name="theme",
+            name="accent_color",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='animations',
+            model_name="theme",
+            name="animations",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='background_color',
+            model_name="theme",
+            name="background_color",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='banner',
+            model_name="theme",
+            name="banner",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='hero_background',
+            model_name="theme",
+            name="hero_background",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='icons_path',
+            model_name="theme",
+            name="icons_path",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_button_text',
+            model_name="theme",
+            name="landing_popup_button_text",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_description',
+            model_name="theme",
+            name="landing_popup_description",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_enabled',
+            model_name="theme",
+            name="landing_popup_enabled",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_image_url',
+            model_name="theme",
+            name="landing_popup_image_url",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_overlay_text',
+            model_name="theme",
+            name="landing_popup_overlay_text",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_subtitle',
+            model_name="theme",
+            name="landing_popup_subtitle",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='landing_popup_title',
+            model_name="theme",
+            name="landing_popup_title",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='popup_content',
+            model_name="theme",
+            name="popup_content",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='popup_title',
+            model_name="theme",
+            name="popup_title",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='primary_color',
+            model_name="theme",
+            name="primary_color",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='secondary_color',
+            model_name="theme",
+            name="secondary_color",
         ),
         migrations.RemoveField(
-            model_name='theme',
-            name='text_color',
+            model_name="theme",
+            name="text_color",
         ),
         migrations.AddField(
-            model_name='theme',
-            name='scrolling_background_color',
-            field=models.CharField(default='#000000', help_text='Background color for the scrolling banner in hex format', max_length=7),
+            model_name="theme",
+            name="scrolling_background_color",
+            field=models.CharField(
+                default="#000000",
+                help_text="Background color for the scrolling banner in hex format",
+                max_length=7,
+            ),
         ),
     ]

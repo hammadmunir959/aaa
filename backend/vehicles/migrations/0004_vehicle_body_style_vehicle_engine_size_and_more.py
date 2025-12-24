@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vehicles', '0003_add_indexes'),
+        ("vehicles", "0003_add_indexes"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='vehicle',
-            name='body_style',
+            model_name="vehicle",
+            name="body_style",
             field=models.CharField(blank=True, max_length=50),
         ),
         migrations.AddField(
-            model_name='vehicle',
-            name='engine_size',
+            model_name="vehicle",
+            name="engine_size",
             field=models.CharField(blank=True, max_length=50),
         ),
         migrations.AddField(
-            model_name='vehicle',
-            name='euro_status',
+            model_name="vehicle",
+            name="euro_status",
             field=models.CharField(blank=True, max_length=50),
         ),
         migrations.AddField(
-            model_name='vehicle',
-            name='model_detail',
+            model_name="vehicle",
+            name="model_detail",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='vehicle',
-            name='registered_year_date',
+            model_name="vehicle",
+            name="registered_year_date",
             field=models.CharField(blank=True, max_length=50),
         ),
     ]

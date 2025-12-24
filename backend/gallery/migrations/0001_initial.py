@@ -15,22 +15,51 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='GalleryImage',
+            name="GalleryImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('image', models.ImageField(upload_to='gallery/')),
-                ('category', models.CharField(choices=[('vehicles', 'Vehicles'), ('office', 'Office'), ('events', 'Events'), ('testimonials', 'Testimonials'), ('general', 'General')], default='general', max_length=20)),
-                ('description', models.TextField(blank=True)),
-                ('is_active', models.BooleanField(default=True)),
-                ('display_order', models.IntegerField(default=0)),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
-                ('uploaded_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("image", models.ImageField(upload_to="gallery/")),
+                (
+                    "category",
+                    models.CharField(
+                        choices=[
+                            ("vehicles", "Vehicles"),
+                            ("office", "Office"),
+                            ("events", "Events"),
+                            ("testimonials", "Testimonials"),
+                            ("general", "General"),
+                        ],
+                        default="general",
+                        max_length=20,
+                    ),
+                ),
+                ("description", models.TextField(blank=True)),
+                ("is_active", models.BooleanField(default=True)),
+                ("display_order", models.IntegerField(default=0)),
+                ("uploaded_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "uploaded_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Gallery Image',
-                'verbose_name_plural': 'Gallery Images',
-                'ordering': ['display_order', '-uploaded_at'],
+                "verbose_name": "Gallery Image",
+                "verbose_name_plural": "Gallery Images",
+                "ordering": ["display_order", "-uploaded_at"],
             },
         ),
     ]

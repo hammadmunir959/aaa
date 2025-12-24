@@ -11,10 +11,10 @@ class ClaimDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClaimDocument
-        fields = '__all__'
+        fields = "__all__"
 
     def get_file_url(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
             return request.build_absolute_uri(obj.file.url)
         return None
@@ -31,41 +31,41 @@ class ClaimSerializer(serializers.ModelSerializer):
     class Meta:
         model = Claim
         fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'phone',
-            'address',
-            'accident_date',
-            'vehicle_registration',
-            'insurance_company',
-            'policy_number',
-            'accident_details',
-            'vehicle',
-            'start_date',
-            'end_date',
-            'pickup_location',
-            'drop_location',
-            'notes',
-            'status',
-            'assigned_staff',
-            'created_at',
-            'updated_at',
-            'documents',
-            'vehicle_details',
-            'assigned_staff_details',
-            'rental_duration_days',
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "address",
+            "accident_date",
+            "vehicle_registration",
+            "insurance_company",
+            "policy_number",
+            "accident_details",
+            "vehicle",
+            "start_date",
+            "end_date",
+            "pickup_location",
+            "drop_location",
+            "notes",
+            "status",
+            "assigned_staff",
+            "created_at",
+            "updated_at",
+            "documents",
+            "vehicle_details",
+            "assigned_staff_details",
+            "rental_duration_days",
         ]
 
     def get_vehicle_details(self, obj: Claim):
         if obj.vehicle:
             return {
-                'id': obj.vehicle.id,
-                'name': obj.vehicle.name,
-                'registration': obj.vehicle.registration,
-                'type': obj.vehicle.type,
-                'status': obj.vehicle.status,
+                "id": obj.vehicle.id,
+                "name": obj.vehicle.name,
+                "registration": obj.vehicle.registration,
+                "type": obj.vehicle.type,
+                "status": obj.vehicle.status,
             }
         return None
 
@@ -74,10 +74,10 @@ class ClaimSerializer(serializers.ModelSerializer):
         if not staff:
             return None
         return {
-            'id': staff.id,
-            'first_name': staff.first_name,
-            'last_name': staff.last_name,
-            'email': staff.email,
+            "id": staff.id,
+            "first_name": staff.first_name,
+            "last_name": staff.last_name,
+            "email": staff.email,
         }
 
     def get_rental_duration_days(self, obj: Claim):
@@ -88,9 +88,7 @@ class ClaimSerializer(serializers.ModelSerializer):
 
 class ClaimCreateSerializer(serializers.ModelSerializer):
     documents = serializers.ListField(
-        child=serializers.FileField(),
-        required=False,
-        write_only=True
+        child=serializers.FileField(), required=False, write_only=True
     )
     # Simple anti-spam fields
     honeypot = serializers.CharField(write_only=True, required=False, allow_blank=True)
@@ -98,51 +96,59 @@ class ClaimCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Claim
         fields = [
-            'first_name', 'last_name', 'email', 'phone', 'address',
-            'accident_date', 'vehicle_registration', 'insurance_company',
-            'policy_number', 'accident_details', 'pickup_location',
-            'drop_location', 'notes', 'documents', 'honeypot'
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "address",
+            "accident_date",
+            "vehicle_registration",
+            "insurance_company",
+            "policy_number",
+            "accident_details",
+            "pickup_location",
+            "drop_location",
+            "notes",
+            "documents",
+            "honeypot",
         ]
 
     def validate(self, attrs):
-        request = self.context.get('request')
-        
-        # Check honeypot (should be empty)
-        honeypot = attrs.pop('honeypot', '')
-        if honeypot:
-            raise serializers.ValidationError({'honeypot': 'Spam detected.'})
-        
+        request = self.context.get("request")
 
+        # Check honeypot (should be empty)
+        honeypot = attrs.pop("honeypot", "")
+        if honeypot:
+            raise serializers.ValidationError({"honeypot": "Spam detected."})
 
         # Rate limiting
-        ip_address = request.META.get('REMOTE_ADDR') if request else None
-        if ip_address and check_rate_limit(ip_address, 'claim'):
+        ip_address = request.META.get("REMOTE_ADDR") if request else None
+        if ip_address and check_rate_limit(ip_address, "claim"):
             raise serializers.ValidationError(
-                {'rate_limit': 'Too many submissions from this IP. Try again later.'}
+                {"rate_limit": "Too many submissions from this IP. Try again later."}
             )
 
         return attrs
 
     def create(self, validated_data):
-        documents = validated_data.pop('documents', [])
+        documents = validated_data.pop("documents", [])
         claim = Claim.objects.create(**validated_data)
 
         for doc_file in documents:
             ClaimDocument.objects.create(
-                claim=claim,
-                file=doc_file,
-                file_name=doc_file.name
+                claim=claim, file=doc_file, file_name=doc_file.name
             )
 
         from utils.email import send_claim_confirmation
+
         send_claim_confirmation(
             claim.email,
             {
-                'id': claim.id,
-                'first_name': claim.first_name,
-                'last_name': claim.last_name,
-                'created_at': claim.created_at,
-            }
+                "id": claim.id,
+                "first_name": claim.first_name,
+                "last_name": claim.last_name,
+                "created_at": claim.created_at,
+            },
         )
 
         return claim
@@ -181,38 +187,40 @@ class OperationsVehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = [
-            'id',
-            'name',
-            'registration',
-            'type',
-            'status',
-            'seats',
-            'fuel_type',
-            'transmission',
-            'daily_rate',
-            'created_at',
-            'updated_at',
-            'current_assignment',
+            "id",
+            "name",
+            "registration",
+            "type",
+            "status",
+            "seats",
+            "fuel_type",
+            "transmission",
+            "daily_rate",
+            "created_at",
+            "updated_at",
+            "current_assignment",
         ]
 
     def get_current_assignment(self, obj: Vehicle):
         claim: Claim | None = (
             Claim.objects.filter(vehicle=obj)
-            .exclude(status='cancelled')
-            .order_by('-created_at')
+            .exclude(status="cancelled")
+            .order_by("-created_at")
             .first()
         )
         if not claim:
             return None
         return {
-            'claim_id': claim.id,
-            'client_name': f"{claim.first_name} {claim.last_name}".strip(),
-            'status': claim.status,
-            'start_date': claim.start_date,
-            'end_date': claim.end_date,
-            'assigned_at': claim.created_at,
-            'staff_id': claim.assigned_staff_id,
-            'staff_name': claim.assigned_staff.get_full_name() if claim.assigned_staff else "",
+            "claim_id": claim.id,
+            "client_name": f"{claim.first_name} {claim.last_name}".strip(),
+            "status": claim.status,
+            "start_date": claim.start_date,
+            "end_date": claim.end_date,
+            "assigned_at": claim.created_at,
+            "staff_id": claim.assigned_staff_id,
+            "staff_name": (
+                claim.assigned_staff.get_full_name() if claim.assigned_staff else ""
+            ),
         }
 
 
@@ -226,15 +234,15 @@ class OperationsStaffSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'admin_type',
-            'status',
-            'assignments_count',
-            'active_assignments_count',
-            'assignments',
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "admin_type",
+            "status",
+            "assignments_count",
+            "active_assignments_count",
+            "assignments",
         ]
 
     def get_assignments_count(self, obj: User):
@@ -242,25 +250,24 @@ class OperationsStaffSerializer(serializers.ModelSerializer):
 
     def get_active_assignments_count(self, obj: User):
         return Claim.objects.filter(
-            assigned_staff=obj,
-            status__in=['pending', 'approved']
+            assigned_staff=obj, status__in=["pending", "approved"]
         ).count()
 
     def get_assignments(self, obj: User):
         claims = (
             Claim.objects.filter(assigned_staff=obj)
-            .select_related('vehicle')
-            .order_by('-created_at')[:5]
+            .select_related("vehicle")
+            .order_by("-created_at")[:5]
         )
         return [
             {
-                'claim_id': c.id,
-                'client_name': f"{c.first_name} {c.last_name}".strip(),
-                'vehicle_registration': c.vehicle.registration if c.vehicle else None,
-                'status': c.status,
-                'start_date': c.start_date,
-                'end_date': c.end_date,
-                'created_at': c.created_at,
+                "claim_id": c.id,
+                "client_name": f"{c.first_name} {c.last_name}".strip(),
+                "vehicle_registration": c.vehicle.registration if c.vehicle else None,
+                "status": c.status,
+                "start_date": c.start_date,
+                "end_date": c.end_date,
+                "created_at": c.created_at,
             }
             for c in claims
         ]
@@ -272,10 +279,7 @@ class OperationsClaimSerializer(ClaimSerializer):
     client_name = serializers.SerializerMethodField()
 
     class Meta(ClaimSerializer.Meta):
-        fields = ClaimSerializer.Meta.fields + ['client_name']
+        fields = ClaimSerializer.Meta.fields + ["client_name"]
 
     def get_client_name(self, obj: Claim):
         return f"{obj.first_name} {obj.last_name}".strip()
-
-
-

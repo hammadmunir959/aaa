@@ -1,13 +1,14 @@
 """
 Add database indexes for performance optimization.
 """
+
 from django.db import migrations
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bookings', '0001_initial'),
+        ("bookings", "0001_initial"),
     ]
 
     operations = [
@@ -25,7 +26,6 @@ class Migration(migrations.Migration):
                 "DROP INDEX IF EXISTS bookings_assigned_staff_idx;",
                 "DROP INDEX IF EXISTS bookings_vehicle_idx;",
                 "DROP INDEX IF EXISTS bookings_email_idx;",
-            ]
+            ],
         ),
     ]
-

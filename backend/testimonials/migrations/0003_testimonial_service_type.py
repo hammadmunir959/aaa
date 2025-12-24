@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('testimonials', '0002_alter_testimonial_status'),
+        ("testimonials", "0002_alter_testimonial_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='testimonial',
-            name='service_type',
-            field=models.CharField(blank=True, choices=[('car_hire', 'Car Hire'), ('car_rental', 'Car Rental'), ('claims_management', 'Claims Management'), ('car_purchase_sale', 'Car Purchase/ Sale')], max_length=30, null=True),
+            model_name="testimonial",
+            name="service_type",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("car_hire", "Car Hire"),
+                    ("car_rental", "Car Rental"),
+                    ("claims_management", "Claims Management"),
+                    ("car_purchase_sale", "Car Purchase/ Sale"),
+                ],
+                max_length=30,
+                null=True,
+            ),
         ),
     ]

@@ -18,18 +18,16 @@ from ..models import ContentIndex
 
 logger = logging.getLogger(__name__)
 
-SEARCH_CACHE_PREFIX = 'chatbot_content_search'
+SEARCH_CACHE_PREFIX = "chatbot_content_search"
 
 
 def invalidate_content_search_cache() -> None:
     """Invalidate all content search cache entries"""
-    invalidate_cache_pattern(f'pchm:{SEARCH_CACHE_PREFIX}:*')
+    invalidate_cache_pattern(f"pchm:{SEARCH_CACHE_PREFIX}:*")
 
 
 def _execute_cached_content_search(
-    query: str,
-    limit: int = 10,
-    content_types: Optional[List[str]] = None
+    query: str, limit: int = 10, content_types: Optional[List[str]] = None
 ) -> List[tuple]:
     """
     Execute cached content search with PostgreSQL full-text search.
@@ -41,10 +39,7 @@ def _execute_cached_content_search(
 
     query_terms = query.lower().split()
     cache_key = get_cache_key(
-        SEARCH_CACHE_PREFIX,
-        query=query,
-        limit=limit,
-        content_types=content_types
+        SEARCH_CACHE_PREFIX, query=query, limit=limit, content_types=content_types
     )
 
     # Try to get from cache first
@@ -62,35 +57,32 @@ def _execute_cached_content_search(
 
 
 def _perform_content_search(
-    query_terms: List[str],
-    limit: int = 10,
-    content_types: Optional[List[str]] = None
+    query_terms: List[str], limit: int = 10, content_types: Optional[List[str]] = None
 ) -> List[tuple]:
     """
     Perform the actual content search using PostgreSQL full-text search.
     """
     # Create search query from terms
-    search_query = SearchQuery(' '.join(query_terms), search_type='websearch')
+    search_query = SearchQuery(" ".join(query_terms), search_type="websearch")
 
     # Create search vector from title and content
-    search_vector = SearchVector('title', weight='A') + SearchVector('content_text', weight='B')
+    search_vector = SearchVector("title", weight="A") + SearchVector(
+        "content_text", weight="B"
+    )
 
     # Base queryset
-    queryset = ContentIndex.objects.filter(
-        is_active=True,
-        is_searchable=True
-    )
+    queryset = ContentIndex.objects.filter(is_active=True, is_searchable=True)
 
     # Filter by content types if specified
     if content_types:
         queryset = queryset.filter(content_type__in=content_types)
 
     # Annotate with search rank and filter by minimum relevance
-    queryset = queryset.annotate(
-        rank=SearchRank(search_vector, search_query)
-    ).filter(
-        Q(rank__gte=0.01)  # Minimum relevance threshold
-    ).order_by('-rank')
+    queryset = (
+        queryset.annotate(rank=SearchRank(search_vector, search_query))
+        .filter(Q(rank__gte=0.01))  # Minimum relevance threshold
+        .order_by("-rank")
+    )
 
     # Get top results
     content_items = list(queryset[:limit])
@@ -106,9 +98,7 @@ class ContentSearchService:
 
     @staticmethod
     def search_content(
-        query: str,
-        limit: int = 10,
-        content_types: Optional[List[str]] = None
+        query: str, limit: int = 10, content_types: Optional[List[str]] = None
     ) -> List[tuple]:
         """
         Search indexed content for relevant information.
@@ -125,9 +115,7 @@ class ContentSearchService:
 
     @staticmethod
     def search_with_fallback(
-        query: str,
-        limit: int = 10,
-        content_types: Optional[List[str]] = None
+        query: str, limit: int = 10, content_types: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
         """
         Search with fallback to keyword-based search if full-text search fails.
@@ -139,26 +127,29 @@ class ContentSearchService:
             # Format for chatbot use
             formatted_results = []
             for content_item, score in results:
-                formatted_results.append({
-                    'title': content_item.title,
-                    'summary': content_item.summary or content_item.content_text[:300] + '...',
-                    'url': content_item.url,
-                    'category': content_item.category,
-                    'relevance_score': float(score),
-                    'content_type': content_item.content_type,
-                })
+                formatted_results.append(
+                    {
+                        "title": content_item.title,
+                        "summary": content_item.summary
+                        or content_item.content_text[:300] + "...",
+                        "url": content_item.url,
+                        "category": content_item.category,
+                        "relevance_score": float(score),
+                        "content_type": content_item.content_type,
+                    }
+                )
 
             return formatted_results
 
         except Exception as e:
-            logger.warning(f"Full-text search failed, falling back to basic search: {e}")
+            logger.warning(
+                f"Full-text search failed, falling back to basic search: {e}"
+            )
             return ContentSearchService._fallback_search(query, limit, content_types)
 
     @staticmethod
     def _fallback_search(
-        query: str,
-        limit: int = 10,
-        content_types: Optional[List[str]] = None
+        query: str, limit: int = 10, content_types: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
         """
         Fallback keyword-based search when full-text search is unavailable.
@@ -188,14 +179,17 @@ class ContentSearchService:
         # Format results
         formatted_results = []
         for content_item, score in top_results:
-            formatted_results.append({
-                'title': content_item.title,
-                'summary': content_item.summary or content_item.content_text[:300] + '...',
-                'url': content_item.url,
-                'category': content_item.category,
-                'relevance_score': score,
-                'content_type': content_item.content_type,
-            })
+            formatted_results.append(
+                {
+                    "title": content_item.title,
+                    "summary": content_item.summary
+                    or content_item.content_text[:300] + "...",
+                    "url": content_item.url,
+                    "category": content_item.category,
+                    "relevance_score": score,
+                    "content_type": content_item.content_type,
+                }
+            )
 
         return formatted_results
 
@@ -229,7 +223,9 @@ class ContentSearchService:
 
         # Keywords matches (high weight)
         keywords = content_item.get_keywords_list()
-        keyword_matches = sum(1 for keyword in keywords if query_lower in keyword.lower())
+        keyword_matches = sum(
+            1 for keyword in keywords if query_lower in keyword.lower()
+        )
         score += keyword_matches * 4.0
 
         # Priority boost

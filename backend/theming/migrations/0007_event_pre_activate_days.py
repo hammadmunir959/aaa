@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('theming', '0006_add_predefined_themes'),
+        ("theming", "0006_add_predefined_themes"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='pre_activate_days',
-            field=models.IntegerField(default=0, help_text='Number of days before start_date to automatically activate this theme'),
+            model_name="event",
+            name="pre_activate_days",
+            field=models.IntegerField(
+                default=0,
+                help_text="Number of days before start_date to automatically activate this theme",
+            ),
         ),
     ]

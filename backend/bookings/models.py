@@ -1,10 +1,11 @@
 from django.db import models
 
+
 class Claim(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('cancelled', 'Cancelled'),
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("cancelled", "Cancelled"),
     ]
 
     # Customer Information
@@ -22,7 +23,9 @@ class Claim(models.Model):
     accident_details = models.TextField()
 
     # Booking Details
-    vehicle = models.ForeignKey('vehicles.Vehicle', on_delete=models.SET_NULL, null=True, blank=True)
+    vehicle = models.ForeignKey(
+        "vehicles.Vehicle", on_delete=models.SET_NULL, null=True, blank=True
+    )
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     pickup_location = models.CharField(max_length=200)
@@ -30,8 +33,10 @@ class Claim(models.Model):
     notes = models.TextField(blank=True)
 
     # Status & Assignment
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    assigned_staff = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    assigned_staff = models.ForeignKey(
+        "accounts.User", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -40,11 +45,12 @@ class Claim(models.Model):
         return f"Claim {self.id} - {self.first_name} {self.last_name}"
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
+
 
 class ClaimDocument(models.Model):
-    claim = models.ForeignKey(Claim, on_delete=models.CASCADE, related_name='documents')
-    file = models.FileField(upload_to='claims/documents/')
+    claim = models.ForeignKey(Claim, on_delete=models.CASCADE, related_name="documents")
+    file = models.FileField(upload_to="claims/documents/")
     file_name = models.CharField(max_length=200)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

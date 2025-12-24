@@ -7,78 +7,144 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chatbot', '0007_install_pg_trgm_extension'),
+        ("chatbot", "0007_install_pg_trgm_extension"),
     ]
 
     operations = [
         migrations.RenameIndex(
-            model_name='contactinfo',
-            new_name='chatbot_con_is_lead_ec48fb_idx',
-            old_name='chatbot_con_is_lead_c_ac5a0a_idx',
+            model_name="contactinfo",
+            new_name="chatbot_con_is_lead_ec48fb_idx",
+            old_name="chatbot_con_is_lead_c_ac5a0a_idx",
         ),
         migrations.RenameIndex(
-            model_name='contactinfo',
-            new_name='chatbot_con_email_7b0f4c_idx',
-            old_name='chatbot_con_email_idx',
+            model_name="contactinfo",
+            new_name="chatbot_con_email_7b0f4c_idx",
+            old_name="chatbot_con_email_idx",
         ),
         migrations.RenameIndex(
-            model_name='contactinfo',
-            new_name='chatbot_con_phone_09c998_idx',
-            old_name='chatbot_con_phone_idx',
+            model_name="contactinfo",
+            new_name="chatbot_con_phone_09c998_idx",
+            old_name="chatbot_con_phone_idx",
         ),
         migrations.RenameIndex(
-            model_name='contentindex',
-            new_name='chatbot_con_content_59836a_idx',
-            old_name='content_type_updated_idx',
+            model_name="contentindex",
+            new_name="chatbot_con_content_59836a_idx",
+            old_name="content_type_updated_idx",
         ),
         migrations.RenameIndex(
-            model_name='contentindex',
-            new_name='chatbot_con_is_acti_20b75f_idx',
-            old_name='active_searchable_priority_idx',
+            model_name="contentindex",
+            new_name="chatbot_con_is_acti_20b75f_idx",
+            old_name="active_searchable_priority_idx",
         ),
         migrations.RenameIndex(
-            model_name='contentindex',
-            new_name='chatbot_con_categor_0f420d_idx',
-            old_name='category_updated_idx',
+            model_name="contentindex",
+            new_name="chatbot_con_categor_0f420d_idx",
+            old_name="category_updated_idx",
         ),
         migrations.RenameIndex(
-            model_name='contentindex',
-            new_name='chatbot_con_url_489897_idx',
-            old_name='url_idx',
+            model_name="contentindex",
+            new_name="chatbot_con_url_489897_idx",
+            old_name="url_idx",
         ),
         migrations.RenameIndex(
-            model_name='contentindex',
-            new_name='chatbot_con_title_681e76_idx',
-            old_name='title_idx',
+            model_name="contentindex",
+            new_name="chatbot_con_title_681e76_idx",
+            old_name="title_idx",
         ),
         migrations.RenameIndex(
-            model_name='conversation',
-            new_name='chatbot_con_is_lead_ba2d5d_idx',
-            old_name='chatbot_con_is_lead_s_ac5a0a_idx',
+            model_name="conversation",
+            new_name="chatbot_con_is_lead_ba2d5d_idx",
+            old_name="chatbot_con_is_lead_s_ac5a0a_idx",
         ),
         migrations.AlterField(
-            model_name='chatbotsettings',
-            name='model',
-            field=models.CharField(choices=[('llama-3.1-8b-instant', 'Llama 3.1 8B Instant (560 tps, 131K context)'), ('llama-3.3-70b-versatile', 'Llama 3.3 70B Versatile (280 tps, 131K context)'), ('openai/gpt-oss-120b', 'OpenAI GPT-OSS 120B (500 tps, 131K context)'), ('openai/gpt-oss-20b', 'OpenAI GPT-OSS 20B (1000 tps, 131K context)'), ('groq/compound', 'Groq Compound (450 tps, 131K context) - Agentic AI System'), ('groq/compound-mini', 'Groq Compound Mini (450 tps, 131K context)'), ('meta-llama/llama-4-maverick-17b-128e-instruct', 'Llama 4 Maverick 17B 128E (600 tps, 131K context)'), ('meta-llama/llama-4-scout-17b-16e-instruct', 'Llama 4 Scout 17B 16E (750 tps, 131K context)'), ('moonshotai/kimi-k2-instruct-0905', 'Moonshot AI Kimi K2 (200 tps, 262K context)'), ('qwen/qwen3-32b', 'Qwen3 32B (400 tps, 131K context)'), ('mixtral-8x7b-32768', 'Mixtral 8x7B (32K context) - Legacy'), ('llama-3.1-70b-versatile', 'Llama 3.1 70B Versatile - Legacy'), ('gemma-7b-it', 'Gemma 7B IT - Legacy'), ('llama-3.2-90b-text-preview', 'Llama 3.2 90B Text Preview - Legacy')], default='llama-3.1-8b-instant', help_text='LLM model to use for chatbot responses', max_length=100),
+            model_name="chatbotsettings",
+            name="model",
+            field=models.CharField(
+                choices=[
+                    (
+                        "llama-3.1-8b-instant",
+                        "Llama 3.1 8B Instant (560 tps, 131K context)",
+                    ),
+                    (
+                        "llama-3.3-70b-versatile",
+                        "Llama 3.3 70B Versatile (280 tps, 131K context)",
+                    ),
+                    (
+                        "openai/gpt-oss-120b",
+                        "OpenAI GPT-OSS 120B (500 tps, 131K context)",
+                    ),
+                    (
+                        "openai/gpt-oss-20b",
+                        "OpenAI GPT-OSS 20B (1000 tps, 131K context)",
+                    ),
+                    (
+                        "groq/compound",
+                        "Groq Compound (450 tps, 131K context) - Agentic AI System",
+                    ),
+                    (
+                        "groq/compound-mini",
+                        "Groq Compound Mini (450 tps, 131K context)",
+                    ),
+                    (
+                        "meta-llama/llama-4-maverick-17b-128e-instruct",
+                        "Llama 4 Maverick 17B 128E (600 tps, 131K context)",
+                    ),
+                    (
+                        "meta-llama/llama-4-scout-17b-16e-instruct",
+                        "Llama 4 Scout 17B 16E (750 tps, 131K context)",
+                    ),
+                    (
+                        "moonshotai/kimi-k2-instruct-0905",
+                        "Moonshot AI Kimi K2 (200 tps, 262K context)",
+                    ),
+                    ("qwen/qwen3-32b", "Qwen3 32B (400 tps, 131K context)"),
+                    ("mixtral-8x7b-32768", "Mixtral 8x7B (32K context) - Legacy"),
+                    ("llama-3.1-70b-versatile", "Llama 3.1 70B Versatile - Legacy"),
+                    ("gemma-7b-it", "Gemma 7B IT - Legacy"),
+                    (
+                        "llama-3.2-90b-text-preview",
+                        "Llama 3.2 90B Text Preview - Legacy",
+                    ),
+                ],
+                default="llama-3.1-8b-instant",
+                help_text="LLM model to use for chatbot responses",
+                max_length=100,
+            ),
         ),
         migrations.AddIndex(
-            model_name='contentindex',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['content_text'], name='contentindex_content_text_gin', opclasses=['gin_trgm_ops']),
+            model_name="contentindex",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["content_text"],
+                name="contentindex_content_text_gin",
+                opclasses=["gin_trgm_ops"],
+            ),
         ),
         migrations.AddIndex(
-            model_name='contentindex',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['keywords'], name='contentindex_keywords_gin', opclasses=['gin_trgm_ops']),
+            model_name="contentindex",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["keywords"],
+                name="contentindex_keywords_gin",
+                opclasses=["gin_trgm_ops"],
+            ),
         ),
         migrations.AddIndex(
-            model_name='conversationmessage',
-            index=models.Index(fields=['conversation', 'timestamp'], name='chatbot_con_convers_4ddcc3_idx'),
+            model_name="conversationmessage",
+            index=models.Index(
+                fields=["conversation", "timestamp"],
+                name="chatbot_con_convers_4ddcc3_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='conversationmessage',
-            index=models.Index(fields=['conversation', '-timestamp'], name='chatbot_con_convers_d7da3c_idx'),
+            model_name="conversationmessage",
+            index=models.Index(
+                fields=["conversation", "-timestamp"],
+                name="chatbot_con_convers_d7da3c_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='conversationmessage',
-            index=models.Index(fields=['conversation', 'id'], name='chatbot_con_convers_ac2f2c_idx'),
+            model_name="conversationmessage",
+            index=models.Index(
+                fields=["conversation", "id"], name="chatbot_con_convers_ac2f2c_idx"
+            ),
         ),
     ]

@@ -11,14 +11,15 @@ from django.utils import timezone
 def generate_simple_captcha() -> Tuple[str, int]:
     """
     Generate a simple math captcha question and answer.
-    
+
     Returns:
         tuple: (question_string, correct_answer)
     """
     # Generate two random numbers between 1 and 20
     num1 = random.randint(1, 20)
     num2 = random.randint(1, 20)
-    
+
+
 def validate_recaptcha(token: str, ip_address: Optional[str] = None) -> bool:
     """
     Legacy reCAPTCHA validation function (deprecated).
@@ -29,7 +30,9 @@ def validate_recaptcha(token: str, ip_address: Optional[str] = None) -> bool:
     return True
 
 
-def check_rate_limit(ip_address: str, action_type: str, max_requests: int = 3, window_minutes: int = 60) -> bool:
+def check_rate_limit(
+    ip_address: str, action_type: str, max_requests: int = 3, window_minutes: int = 60
+) -> bool:
     """
     Simple rate limiter based on IP address and action type.
     Returns True if the limit is exceeded.
@@ -39,7 +42,9 @@ def check_rate_limit(ip_address: str, action_type: str, max_requests: int = 3, w
     window_start = now - timedelta(minutes=window_minutes)
 
     request_times = cache.get(cache_key, [])
-    request_times = [timestamp for timestamp in request_times if timestamp > window_start]
+    request_times = [
+        timestamp for timestamp in request_times if timestamp > window_start
+    ]
 
     if len(request_times) >= max_requests:
         return True

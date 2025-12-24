@@ -15,22 +15,52 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='FAQ',
+            name="FAQ",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question', models.CharField(max_length=500)),
-                ('answer', models.TextField()),
-                ('category', models.CharField(choices=[('general', 'General'), ('vehicles', 'Vehicles'), ('bookings', 'Bookings'), ('insurance', 'Insurance'), ('pricing', 'Pricing'), ('car_sales', 'Car Sales')], default='general', max_length=20)),
-                ('is_active', models.BooleanField(default=True)),
-                ('display_order', models.IntegerField(default=0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("question", models.CharField(max_length=500)),
+                ("answer", models.TextField()),
+                (
+                    "category",
+                    models.CharField(
+                        choices=[
+                            ("general", "General"),
+                            ("vehicles", "Vehicles"),
+                            ("bookings", "Bookings"),
+                            ("insurance", "Insurance"),
+                            ("pricing", "Pricing"),
+                            ("car_sales", "Car Sales"),
+                        ],
+                        default="general",
+                        max_length=20,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True)),
+                ("display_order", models.IntegerField(default=0)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'FAQ',
-                'verbose_name_plural': 'FAQs',
-                'ordering': ['display_order', '-created_at'],
+                "verbose_name": "FAQ",
+                "verbose_name_plural": "FAQs",
+                "ordering": ["display_order", "-created_at"],
             },
         ),
     ]

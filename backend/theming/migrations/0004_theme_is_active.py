@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('theming', '0003_theme_scrolling_message'),
+        ("theming", "0003_theme_scrolling_message"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='theme',
-            name='is_active',
-            field=models.BooleanField(default=False, help_text='If set, this theme will be used globally as default (unless an event overrides it)'),
+            model_name="theme",
+            name="is_active",
+            field=models.BooleanField(
+                default=False,
+                help_text="If set, this theme will be used globally as default (unless an event overrides it)",
+            ),
         ),
     ]

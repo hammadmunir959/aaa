@@ -47,5 +47,3 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         if request and obj.image:
             return request.build_absolute_uri(obj.image.url)
         return None
-
-

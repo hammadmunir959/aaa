@@ -7,29 +7,60 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('slug', models.SlugField(max_length=120, unique=True)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
-                ('theme', models.CharField(choices=[('christmas', 'Christmas'), ('valentine', "Valentine's Day"), ('eid', 'Eid'), ('black_friday', 'Black Friday'), ('new_year', 'New Year'), ('default', 'Default')], default='default', max_length=50)),
-                ('priority', models.IntegerField(default=0, help_text='Higher priority runs when events overlap')),
-                ('active', models.BooleanField(default=True)),
-                ('recurring_yearly', models.BooleanField(default=False, help_text='If true, treat as recurring each year')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
+                ("slug", models.SlugField(max_length=120, unique=True)),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField()),
+                (
+                    "theme",
+                    models.CharField(
+                        choices=[
+                            ("christmas", "Christmas"),
+                            ("valentine", "Valentine's Day"),
+                            ("eid", "Eid"),
+                            ("black_friday", "Black Friday"),
+                            ("new_year", "New Year"),
+                            ("default", "Default"),
+                        ],
+                        default="default",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "priority",
+                    models.IntegerField(
+                        default=0, help_text="Higher priority runs when events overlap"
+                    ),
+                ),
+                ("active", models.BooleanField(default=True)),
+                (
+                    "recurring_yearly",
+                    models.BooleanField(
+                        default=False, help_text="If true, treat as recurring each year"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'verbose_name': 'Event',
-                'verbose_name_plural': 'Events',
-                'ordering': ['-priority', 'start_date'],
+                "verbose_name": "Event",
+                "verbose_name_plural": "Events",
+                "ordering": ["-priority", "start_date"],
             },
         ),
     ]

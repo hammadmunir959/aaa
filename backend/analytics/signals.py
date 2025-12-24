@@ -56,6 +56,9 @@ def _connect_signals(models, handler, suffix):
         )
 
 
-_connect_signals(SUMMARY_MODELS, _invalidate_summary_cache, DASHBOARD_SUMMARY_CACHE_PREFIX)
-_connect_signals(BOOKING_TREND_MODELS, _invalidate_booking_trends_cache, BOOKING_TRENDS_CACHE_PREFIX)
-
+_connect_signals(
+    SUMMARY_MODELS, _invalidate_summary_cache, DASHBOARD_SUMMARY_CACHE_PREFIX
+)
+_connect_signals(
+    BOOKING_TREND_MODELS, _invalidate_booking_trends_cache, BOOKING_TRENDS_CACHE_PREFIX
+)

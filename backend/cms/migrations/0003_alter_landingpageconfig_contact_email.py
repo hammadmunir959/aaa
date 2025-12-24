@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0002_teammember'),
+        ("cms", "0002_teammember"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='landingpageconfig',
-            name='contact_email',
-            field=models.EmailField(blank=True, default='info@aaa-as.co.uk', help_text='Contact email address', max_length=254),
+            model_name="landingpageconfig",
+            name="contact_email",
+            field=models.EmailField(
+                blank=True,
+                default="info@aaa-as.co.uk",
+                help_text="Contact email address",
+                max_length=254,
+            ),
         ),
     ]

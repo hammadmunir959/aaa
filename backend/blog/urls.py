@@ -3,16 +3,11 @@ from rest_framework.routers import DefaultRouter
 
 from .views import BlogPostViewSet
 
-app_name = 'blog'
+app_name = "blog"
 
 router = DefaultRouter()
-router.register(r'blog-posts', BlogPostViewSet, basename='blog-post')
+router.register(r"blog-posts", BlogPostViewSet, basename="blog-post")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
-
-
-
-
-

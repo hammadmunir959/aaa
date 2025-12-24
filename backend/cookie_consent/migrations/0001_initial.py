@@ -15,22 +15,38 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='CookieConsent',
+            name="CookieConsent",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('session_id', models.CharField(max_length=200, unique=True)),
-                ('ip_address', models.GenericIPAddressField(blank=True, null=True)),
-                ('user_agent', models.TextField(blank=True)),
-                ('necessary_cookies', models.BooleanField(default=True)),
-                ('analytics_cookies', models.BooleanField(default=False)),
-                ('marketing_cookies', models.BooleanField(default=False)),
-                ('functional_cookies', models.BooleanField(default=False)),
-                ('consented_at', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("session_id", models.CharField(max_length=200, unique=True)),
+                ("ip_address", models.GenericIPAddressField(blank=True, null=True)),
+                ("user_agent", models.TextField(blank=True)),
+                ("necessary_cookies", models.BooleanField(default=True)),
+                ("analytics_cookies", models.BooleanField(default=False)),
+                ("marketing_cookies", models.BooleanField(default=False)),
+                ("functional_cookies", models.BooleanField(default=False)),
+                ("consented_at", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-consented_at'],
+                "ordering": ["-consented_at"],
             },
         ),
     ]

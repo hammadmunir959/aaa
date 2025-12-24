@@ -33,14 +33,14 @@ def get_backup_directory() -> Path:
     Returns:
         Path: Backup directory path
     """
-    if hasattr(settings, 'BACKUP_STORAGE') and settings.BACKUP_STORAGE == 's3':
+    if hasattr(settings, "BACKUP_STORAGE") and settings.BACKUP_STORAGE == "s3":
         # For S3 storage, use a temporary local directory
-        temp_dir = Path(tempfile.gettempdir()) / 'aaa_backups'
+        temp_dir = Path(tempfile.gettempdir()) / "aaa_backups"
         temp_dir.mkdir(exist_ok=True)
         return temp_dir
     else:
         # Default local storage
-        backup_dir = Path(os.getenv('BACKUP_DIR', '/opt/backups/aaa'))
+        backup_dir = Path(os.getenv("BACKUP_DIR", "/opt/backups/aaa"))
         backup_dir.mkdir(parents=True, exist_ok=True)
         return backup_dir
 
@@ -52,7 +52,7 @@ def get_timestamp() -> str:
     Returns:
         str: Timestamp in YYYYMMDD_HHMMSS format
     """
-    return datetime.now().strftime('%Y%m%d_%H%M%S')
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 def backup_database() -> Optional[str]:
@@ -72,47 +72,50 @@ def backup_database() -> Optional[str]:
         backup_dir.mkdir(parents=True, exist_ok=True)
 
         # Database connection parameters
-        db_config = settings.DATABASES['default']
-        db_name = db_config['NAME']
-        db_user = db_config['USER']
-        db_password = db_config['PASSWORD']
-        db_host = db_config['HOST']
-        db_port = db_config['PORT']
+        db_config = settings.DATABASES["default"]
+        db_name = db_config["NAME"]
+        db_user = db_config["USER"]
+        db_password = db_config["PASSWORD"]
+        db_host = db_config["HOST"]
+        db_port = db_config["PORT"]
 
         # Build pg_dump command
         import subprocess
+
         cmd = [
-            'pg_dump',
-            '-h', db_host,
-            '-p', str(db_port),
-            '-U', db_user,
-            '-d', db_name,
-            '--no-password',
-            '--compress=9',  # gzip compression level 9
-            '--format=custom',  # custom format (compressed)
-            '--blobs',  # include large objects
-            '--verbose'
+            "pg_dump",
+            "-h",
+            db_host,
+            "-p",
+            str(db_port),
+            "-U",
+            db_user,
+            "-d",
+            db_name,
+            "--no-password",
+            "--compress=9",  # gzip compression level 9
+            "--format=custom",  # custom format (compressed)
+            "--blobs",  # include large objects
+            "--verbose",
         ]
 
         # Set environment variable for password
         env = os.environ.copy()
-        env['PGPASSWORD'] = db_password
+        env["PGPASSWORD"] = db_password
 
         logger.info(f"Creating database backup: {backup_path}")
 
         # Run pg_dump
-        with open(backup_path, 'wb') as f:
+        with open(backup_path, "wb") as f:
             result = subprocess.run(
-                cmd,
-                stdout=f,
-                stderr=subprocess.PIPE,
-                env=env,
-                check=True
+                cmd, stdout=f, stderr=subprocess.PIPE, env=env, check=True
             )
 
         if backup_path.exists() and backup_path.stat().st_size > 0:
             size_mb = backup_path.stat().st_size / (1024 * 1024)
-            logger.info(f"Database backup created successfully: {backup_path} ({size_mb:.2f} MB)")
+            logger.info(
+                f"Database backup created successfully: {backup_path} ({size_mb:.2f} MB)"
+            )
             return str(backup_path)
         else:
             logger.error("Database backup file was not created or is empty")
@@ -147,7 +150,7 @@ def backup_media_files() -> Optional[str]:
         # Create compressed archive
         with tarfile.open(backup_path, "w:gz") as tar:
             # Add all files in media directory
-            for file_path in media_root.rglob('*'):
+            for file_path in media_root.rglob("*"):
                 if file_path.is_file():
                     # Calculate relative path for archive
                     relative_path = file_path.relative_to(media_root.parent)
@@ -155,7 +158,9 @@ def backup_media_files() -> Optional[str]:
 
         # Verify backup was created and has content
         if backup_path.exists() and backup_path.stat().st_size > 0:
-            logger.info(f"Media backup created: {backup_path} ({backup_path.stat().st_size} bytes)")
+            logger.info(
+                f"Media backup created: {backup_path} ({backup_path.stat().st_size} bytes)"
+            )
             return str(backup_path)
         else:
             logger.error("Media backup creation failed or resulted in empty file")
@@ -213,13 +218,16 @@ Media size: {media_path.stat().st_size} bytes
 
             # Add metadata as a file in the archive
             import io
-            metadata_file = io.BytesIO(metadata_content.encode('utf-8'))
+
+            metadata_file = io.BytesIO(metadata_content.encode("utf-8"))
             tarinfo = tarfile.TarInfo(name="backup_info.txt")
-            tarinfo.size = len(metadata_content.encode('utf-8'))
+            tarinfo.size = len(metadata_content.encode("utf-8"))
             tar.addfile(tarinfo, fileobj=metadata_file)
 
         if archive_path.exists() and archive_path.stat().st_size > 0:
-            logger.info(f"Full backup archive created: {archive_path} ({archive_path.stat().st_size} bytes)")
+            logger.info(
+                f"Full backup archive created: {archive_path} ({archive_path.stat().st_size} bytes)"
+            )
 
             # Clean up individual backup files after successful archive creation
             try:
@@ -231,7 +239,9 @@ Media size: {media_path.stat().st_size} bytes
 
             return str(archive_path)
         else:
-            logger.error("Full backup archive creation failed or resulted in empty file")
+            logger.error(
+                "Full backup archive creation failed or resulted in empty file"
+            )
             return None
 
     except Exception as e:
@@ -304,7 +314,7 @@ def verify_backup_integrity(backup_path: str) -> bool:
             return False
 
         # For tar.gz files, try to open and verify structure
-        if backup_path.endswith('.tar.gz'):
+        if backup_path.endswith(".tar.gz"):
             try:
                 with tarfile.open(backup_path, "r:gz") as tar:
                     # Try to list contents to verify archive integrity
@@ -317,7 +327,7 @@ def verify_backup_integrity(backup_path: str) -> bool:
         else:
             # For other files, just check size and readability
             try:
-                with open(backup_path, 'rb') as f:
+                with open(backup_path, "rb") as f:
                     f.read(1024)  # Try to read first 1KB
                 logger.info(f"Backup file verified: {backup_path}")
                 return True
@@ -344,18 +354,30 @@ def list_backups() -> list[dict]:
         for backup_file in backup_dir.glob("*"):
             if backup_file.is_file():
                 stat = backup_file.stat()
-                backups.append({
-                    'filename': backup_file.name,
-                    'path': str(backup_file),
-                    'size': stat.st_size,
-                    'created': datetime.fromtimestamp(stat.st_mtime),
-                    'type': 'database' if backup_file.name.startswith('db_') else
-                           'media' if backup_file.name.startswith('media_') else
-                           'full' if backup_file.name.startswith('full_backup_') else 'unknown'
-                })
+                backups.append(
+                    {
+                        "filename": backup_file.name,
+                        "path": str(backup_file),
+                        "size": stat.st_size,
+                        "created": datetime.fromtimestamp(stat.st_mtime),
+                        "type": (
+                            "database"
+                            if backup_file.name.startswith("db_")
+                            else (
+                                "media"
+                                if backup_file.name.startswith("media_")
+                                else (
+                                    "full"
+                                    if backup_file.name.startswith("full_backup_")
+                                    else "unknown"
+                                )
+                            )
+                        ),
+                    }
+                )
 
         # Sort by creation time (newest first)
-        backups.sort(key=lambda x: x['created'], reverse=True)
+        backups.sort(key=lambda x: x["created"], reverse=True)
 
         return backups
 
@@ -375,23 +397,23 @@ def get_backup_stats() -> dict:
         backups = list_backups()
         backup_dir = get_backup_directory()
 
-        total_size = sum(b['size'] for b in backups)
-        oldest_backup = min((b['created'] for b in backups), default=None)
-        newest_backup = max((b['created'] for b in backups), default=None)
+        total_size = sum(b["size"] for b in backups)
+        oldest_backup = min((b["created"] for b in backups), default=None)
+        newest_backup = max((b["created"] for b in backups), default=None)
 
         stats = {
-            'total_backups': len(backups),
-            'total_size_bytes': total_size,
-            'total_size_mb': round(total_size / (1024 * 1024), 2),
-            'backup_directory': str(backup_dir),
-            'oldest_backup': oldest_backup.isoformat() if oldest_backup else None,
-            'newest_backup': newest_backup.isoformat() if newest_backup else None,
-            'backups_by_type': {
-                'database': len([b for b in backups if b['type'] == 'database']),
-                'media': len([b for b in backups if b['type'] == 'media']),
-                'full': len([b for b in backups if b['type'] == 'full']),
-                'unknown': len([b for b in backups if b['type'] == 'unknown']),
-            }
+            "total_backups": len(backups),
+            "total_size_bytes": total_size,
+            "total_size_mb": round(total_size / (1024 * 1024), 2),
+            "backup_directory": str(backup_dir),
+            "oldest_backup": oldest_backup.isoformat() if oldest_backup else None,
+            "newest_backup": newest_backup.isoformat() if newest_backup else None,
+            "backups_by_type": {
+                "database": len([b for b in backups if b["type"] == "database"]),
+                "media": len([b for b in backups if b["type"] == "media"]),
+                "full": len([b for b in backups if b["type"] == "full"]),
+                "unknown": len([b for b in backups if b["type"] == "unknown"]),
+            },
         }
 
         return stats
@@ -413,7 +435,7 @@ def run_legacy_backup() -> bool:
     import subprocess
 
     try:
-        script_path = Path(settings.BASE_DIR).parent / 'backup.sh'
+        script_path = Path(settings.BASE_DIR).parent / "backup.sh"
 
         if not script_path.exists():
             logger.error(f"Legacy backup script not found: {script_path}")
@@ -424,10 +446,7 @@ def run_legacy_backup() -> bool:
 
         # Run the backup script
         result = subprocess.run(
-            [str(script_path)],
-            cwd=script_path.parent,
-            capture_output=True,
-            text=True
+            [str(script_path)], cwd=script_path.parent, capture_output=True, text=True
         )
 
         if result.returncode == 0:

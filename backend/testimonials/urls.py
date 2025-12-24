@@ -3,16 +3,11 @@ from rest_framework.routers import DefaultRouter
 
 from .views import TestimonialViewSet
 
-app_name = 'testimonials'
+app_name = "testimonials"
 
 router = DefaultRouter()
-router.register(r'testimonials', TestimonialViewSet, basename='testimonial')
+router.register(r"testimonials", TestimonialViewSet, basename="testimonial")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
-
-
-
-
-

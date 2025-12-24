@@ -7,19 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('analytics', '0002_add_notification_fields_to_activitylog'),
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("analytics", "0002_add_notification_fields_to_activitylog"),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RenameIndex(
-            model_name='activitylog',
-            new_name='analytics_a_recipie_304567_idx',
-            old_name='analytics_a_recipie_idx',
+            model_name="activitylog",
+            new_name="analytics_a_recipie_304567_idx",
+            old_name="analytics_a_recipie_idx",
         ),
         migrations.AddIndex(
-            model_name='activitylog',
-            index=models.Index(fields=['-created_at'], name='analytics_a_created_b5efc6_idx'),
+            model_name="activitylog",
+            index=models.Index(
+                fields=["-created_at"], name="analytics_a_created_b5efc6_idx"
+            ),
         ),
     ]

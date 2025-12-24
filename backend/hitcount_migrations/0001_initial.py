@@ -10,70 +10,127 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BlacklistIP',
+            name="BlacklistIP",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ip', models.CharField(max_length=40, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ip", models.CharField(max_length=40, unique=True)),
             ],
             options={
-                'verbose_name': 'Blacklisted IP',
-                'verbose_name_plural': 'Blacklisted IPs',
-                'db_table': 'hitcount_blacklist_ip',
+                "verbose_name": "Blacklisted IP",
+                "verbose_name_plural": "Blacklisted IPs",
+                "db_table": "hitcount_blacklist_ip",
             },
         ),
         migrations.CreateModel(
-            name='BlacklistUserAgent',
+            name="BlacklistUserAgent",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user_agent', models.CharField(max_length=255, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("user_agent", models.CharField(max_length=255, unique=True)),
             ],
             options={
-                'verbose_name': 'Blacklisted User Agent',
-                'verbose_name_plural': 'Blacklisted User Agents',
-                'db_table': 'hitcount_blacklist_user_agent',
+                "verbose_name": "Blacklisted User Agent",
+                "verbose_name_plural": "Blacklisted User Agents",
+                "db_table": "hitcount_blacklist_user_agent",
             },
         ),
         migrations.CreateModel(
-            name='HitCount',
+            name="HitCount",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hits', models.PositiveIntegerField(default=0)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('object_pk', models.PositiveIntegerField(verbose_name='object ID')),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='content_type_set_for_%(class)s', to='contenttypes.contenttype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("hits", models.PositiveIntegerField(default=0)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                ("object_pk", models.PositiveIntegerField(verbose_name="object ID")),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="content_type_set_for_%(class)s",
+                        to="contenttypes.contenttype",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'hit count',
-                'verbose_name_plural': 'hit counts',
-                'db_table': 'hitcount_hit_count',
-                'ordering': ('-hits',),
-                'get_latest_by': 'modified',
-                'abstract': False,
-                'unique_together': {('content_type', 'object_pk')},
+                "verbose_name": "hit count",
+                "verbose_name_plural": "hit counts",
+                "db_table": "hitcount_hit_count",
+                "ordering": ("-hits",),
+                "get_latest_by": "modified",
+                "abstract": False,
+                "unique_together": {("content_type", "object_pk")},
             },
         ),
         migrations.CreateModel(
-            name='Hit',
+            name="Hit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('ip', models.CharField(db_index=True, editable=False, max_length=40)),
-                ('session', models.CharField(db_index=True, editable=False, max_length=40)),
-                ('user_agent', models.CharField(editable=False, max_length=255)),
-                ('user', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('hitcount', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to='hitcount.hitcount')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("ip", models.CharField(db_index=True, editable=False, max_length=40)),
+                (
+                    "session",
+                    models.CharField(db_index=True, editable=False, max_length=40),
+                ),
+                ("user_agent", models.CharField(editable=False, max_length=255)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "hitcount",
+                    models.ForeignKey(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="hitcount.hitcount",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'hit',
-                'verbose_name_plural': 'hits',
-                'ordering': ('-created',),
-                'get_latest_by': 'created',
+                "verbose_name": "hit",
+                "verbose_name_plural": "hits",
+                "ordering": ("-created",),
+                "get_latest_by": "created",
             },
         ),
     ]

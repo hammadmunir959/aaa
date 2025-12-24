@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 def _backups_enabled() -> bool:
-    enabled = getattr(settings, 'BACKUP_ENABLED', True)
+    enabled = getattr(settings, "BACKUP_ENABLED", True)
     if not enabled:
-        logger.info('Backups are disabled via BACKUP_ENABLED setting.')
+        logger.info("Backups are disabled via BACKUP_ENABLED setting.")
     return enabled
 
 
@@ -30,7 +30,7 @@ def run_database_backup(self) -> Optional[str]:
         return None
 
     backup_path = backup_database()
-    logger.info('Database backup created at %s', backup_path)
+    logger.info("Database backup created at %s", backup_path)
     return backup_path
 
 
@@ -41,7 +41,7 @@ def run_media_backup(self) -> Optional[str]:
         return None
 
     media_backup_path = backup_media_files()
-    logger.info('Media backup created at %s', media_backup_path)
+    logger.info("Media backup created at %s", media_backup_path)
     return media_backup_path
 
 
@@ -55,16 +55,16 @@ def run_full_backup(self) -> Optional[str]:
     media_backup_path = backup_media_files()
     archive_path = create_backup_archive(db_backup_path, media_backup_path)
     logger.info(
-        'Full backup archive created at %s (db=%s, media=%s)',
+        "Full backup archive created at %s (db=%s, media=%s)",
         archive_path,
         db_backup_path,
         media_backup_path,
     )
 
     # Perform retention cleanup after successful backup
-    retention_days = getattr(settings, 'BACKUP_RETENTION_DAYS', 30)
+    retention_days = getattr(settings, "BACKUP_RETENTION_DAYS", 30)
     cleanup_old_backups(days=retention_days)
-    logger.info('Old backups older than %s days cleaned up.', retention_days)
+    logger.info("Old backups older than %s days cleaned up.", retention_days)
     return archive_path
 
 
@@ -74,7 +74,6 @@ def cleanup_expired_backups(self) -> None:
     if not _backups_enabled():
         return
 
-    retention_days = getattr(settings, 'BACKUP_RETENTION_DAYS', 30)
+    retention_days = getattr(settings, "BACKUP_RETENTION_DAYS", 30)
     cleanup_old_backups(days=retention_days)
-    logger.info('Scheduled cleanup removed backups older than %s days.', retention_days)
-
+    logger.info("Scheduled cleanup removed backups older than %s days.", retention_days)

@@ -6,18 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0003_alter_landingpageconfig_contact_email'),
+        ("cms", "0003_alter_landingpageconfig_contact_email"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='landingpageconfig',
-            name='contact_address',
-            field=models.CharField(blank=True, default='First Floor, The Urban Building, 3–9 Albert Street, Slough, SL1 2BE', help_text='Contact address', max_length=255),
+            model_name="landingpageconfig",
+            name="contact_address",
+            field=models.CharField(
+                blank=True,
+                default="First Floor, The Urban Building, 3–9 Albert Street, Slough, SL1 2BE",
+                help_text="Contact address",
+                max_length=255,
+            ),
         ),
         migrations.AlterField(
-            model_name='landingpageconfig',
-            name='contact_phone',
-            field=models.CharField(blank=True, default='+44 (0) 800 011 6197', help_text='Contact phone number', max_length=50),
+            model_name="landingpageconfig",
+            name="contact_phone",
+            field=models.CharField(
+                blank=True,
+                default="+44 (0) 800 011 6197",
+                help_text="Contact phone number",
+                max_length=50,
+            ),
         ),
     ]

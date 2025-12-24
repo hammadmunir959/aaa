@@ -11,11 +11,11 @@ from .content_search import ContentSearchService, invalidate_content_search_cach
 from .response_generator import ResponseGenerator
 
 __all__ = [
-    'ContentIndexer',
-    'SimpleChatbotService',
-    'ContextManager',
-    'ContentSearchService',
-    'ResponseGenerator',
-    'invalidate_context_sections_cache',
-    'invalidate_content_search_cache',
+    "ContentIndexer",
+    "SimpleChatbotService",
+    "ContextManager",
+    "ContentSearchService",
+    "ResponseGenerator",
+    "invalidate_context_sections_cache",
+    "invalidate_content_search_cache",
 ]

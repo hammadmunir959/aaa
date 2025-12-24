@@ -6,17 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_alter_user_options_and_more'),
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("accounts", "0003_alter_user_options_and_more"),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='user',
+            name="user",
             options={},
         ),
         migrations.AddConstraint(
-            model_name='user',
-            constraint=models.UniqueConstraint(condition=models.Q(('admin_type', 'super_admin')), fields=('admin_type',), name='unique_super_admin_user'),
+            model_name="user",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("admin_type", "super_admin")),
+                fields=("admin_type",),
+                name="unique_super_admin_user",
+            ),
         ),
     ]

@@ -1,11 +1,9 @@
 import os
 
 # Determine which settings file to use
-env = os.getenv('DJANGO_ENV', 'development')
+env = os.getenv("DJANGO_ENV", "development")
 
-if env == 'production':
+if env == "production":
     from .production import *
 else:
     from .development import *
-
-

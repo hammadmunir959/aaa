@@ -26,13 +26,15 @@ class ResponseGenerator:
 
     def __init__(self):
         # Initial settings from django.conf.settings
-        self.groq_api_key = getattr(settings, 'GROQ_API_KEY', None)
-        self.model = getattr(settings, 'GROQ_MODEL', 'llama-3.1-8b-instant')
-        self.openrouter_api_key = getattr(settings, 'OPENROUTER_API_KEY', None)
-        self.openrouter_model = getattr(settings, 'OPENROUTER_MODEL', 'openai/gpt-oss-20b:free')
+        self.groq_api_key = getattr(settings, "GROQ_API_KEY", None)
+        self.model = getattr(settings, "GROQ_MODEL", "llama-3.1-8b-instant")
+        self.openrouter_api_key = getattr(settings, "OPENROUTER_API_KEY", None)
+        self.openrouter_model = getattr(
+            settings, "OPENROUTER_MODEL", "openai/gpt-oss-20b:free"
+        )
         self.max_tokens = 80
         self.temperature = 0.3
-        
+
         # Initialize Groq clients lazily
         self._client = None
         self._async_client = None
@@ -40,6 +42,7 @@ class ResponseGenerator:
     def _get_db_settings(self):
         """Fetch settings from the database singleton."""
         from ..models import ChatbotSettings
+
         try:
             db_settings = ChatbotSettings.get_settings()
             if db_settings.api_key:
@@ -53,7 +56,9 @@ class ResponseGenerator:
             self.max_tokens = db_settings.max_tokens
             self.temperature = db_settings.temperature
         except Exception as e:
-            logger.warning(f"Failed to load settings from DB, using defaults/environment: {e}")
+            logger.warning(
+                f"Failed to load settings from DB, using defaults/environment: {e}"
+            )
 
     @property
     def async_client(self):
@@ -63,6 +68,7 @@ class ResponseGenerator:
             if self.groq_api_key:
                 try:
                     import groq
+
                     self._async_client = groq.AsyncGroq(api_key=self.groq_api_key)
                 except Exception as e:
                     logger.error(f"Failed to initialize AsyncGroq client: {e}")
@@ -76,6 +82,7 @@ class ResponseGenerator:
             if self.groq_api_key:
                 try:
                     import groq
+
                     self._client = groq.Groq(api_key=self.groq_api_key)
                 except Exception as e:
                     logger.error(f"Failed to initialize Groq client: {e}")
@@ -86,7 +93,7 @@ class ResponseGenerator:
         message: str,
         context: str,
         conversation: Conversation,
-        contact_info: Optional[Dict[str, str]] = None
+        contact_info: Optional[Dict[str, str]] = None,
     ) -> str:
         """
         Async version of generate_response.
@@ -95,19 +102,21 @@ class ResponseGenerator:
         # Note: We assume 'conversation' passed here has necessary data or we access it carefully.
         # Ideally, history construction happens outside or we use async iteration if this was fully async.
         # For simplicity, we restart history construction logic or expect pre-fetched data.
-        # To avoid DB issues, we'll assume the view passes the context string fully formed, 
+        # To avoid DB issues, we'll assume the view passes the context string fully formed,
         # OR we use sync_to_async for the DB parts here.
-        
+
         from asgiref.sync import sync_to_async
-        
+
         # Helper to get history safely
         @sync_to_async
         def get_history():
-            recent_messages = list(conversation.messages.order_by('-timestamp')[:4])
+            recent_messages = list(conversation.messages.order_by("-timestamp")[:4])
             history = []
             for msg in reversed(recent_messages):
-                sender = 'Assistant' if msg.message_type == 'assistant' else 'User'
-                content = msg.content[:100] + '...' if len(msg.content) > 100 else msg.content
+                sender = "Assistant" if msg.message_type == "assistant" else "User"
+                content = (
+                    msg.content[:100] + "..." if len(msg.content) > 100 else msg.content
+                )
                 history.append(f"{sender}: {content}")
             return "\n".join(history) if history else "New conversation"
 
@@ -128,11 +137,15 @@ class ResponseGenerator:
 
         # Check if client is available
         if not self.async_client:
-            logger.warning("Groq async client not initialized, trying OpenRouter fallback")
+            logger.warning(
+                "Groq async client not initialized, trying OpenRouter fallback"
+            )
             try:
                 system_prompt = self._get_system_prompt()
                 if self.openrouter_api_key:
-                    return await self._generate_with_openrouter_async(system_prompt, prompt)
+                    return await self._generate_with_openrouter_async(
+                        system_prompt, prompt
+                    )
             except Exception as e:
                 logger.warning(f"OpenRouter fallback failed: {e}")
             return "Hello! How can I help you with your car hire needs today?"
@@ -143,21 +156,25 @@ class ResponseGenerator:
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt}
+                    {"role": "user", "content": prompt},
                 ],
                 max_tokens=80,
-                temperature=0.3
+                temperature=0.3,
             )
             raw_response = response.choices[0].message.content.strip()
 
             cleaned_response = self._clean_response(raw_response)
-            truncated_response = self._truncate_to_sentences(cleaned_response, max_sentences=3)
+            truncated_response = self._truncate_to_sentences(
+                cleaned_response, max_sentences=3
+            )
             final_response = self._final_cleanup(truncated_response)
 
             return final_response
 
         except Exception as groq_error:
-            logger.warning(f"Groq Async API error: {groq_error}, falling back to OpenRouter")
+            logger.warning(
+                f"Groq Async API error: {groq_error}, falling back to OpenRouter"
+            )
             try:
                 return await self._generate_with_openrouter_async(system_prompt, prompt)
             except Exception as openrouter_error:
@@ -169,19 +186,21 @@ class ResponseGenerator:
         message: str,
         context: str,
         conversation: Conversation,
-        contact_info: Optional[Dict[str, str]] = None
+        contact_info: Optional[Dict[str, str]] = None,
     ) -> str:
         """
         Generate a natural, professional response using AI.
         """
         # Get conversation history for context
-        recent_messages = list(conversation.messages.order_by('-timestamp')[:4])
+        recent_messages = list(conversation.messages.order_by("-timestamp")[:4])
         history = []
         for msg in reversed(recent_messages):
-            sender = 'Assistant' if msg.message_type == 'assistant' else 'User'
-            content = msg.content[:100] + '...' if len(msg.content) > 100 else msg.content
+            sender = "Assistant" if msg.message_type == "assistant" else "User"
+            content = (
+                msg.content[:100] + "..." if len(msg.content) > 100 else msg.content
+            )
             history.append(f"{sender}: {content}")
-            
+
         conversation_context = "\n".join(history) if history else "New conversation"
 
         # Check if we have specific content knowledge
@@ -214,16 +233,18 @@ class ResponseGenerator:
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt}
+                    {"role": "user", "content": prompt},
                 ],
                 max_tokens=80,  # Very strict limit for 2-3 sentences
-                temperature=0.3  # Lower temperature for more consistent, concise responses
+                temperature=0.3,  # Lower temperature for more consistent, concise responses
             )
             raw_response = response.choices[0].message.content.strip()
 
             # Clean and format the response
             cleaned_response = self._clean_response(raw_response)
-            truncated_response = self._truncate_to_sentences(cleaned_response, max_sentences=3)
+            truncated_response = self._truncate_to_sentences(
+                cleaned_response, max_sentences=3
+            )
             final_response = self._final_cleanup(truncated_response)
 
             return final_response
@@ -242,7 +263,7 @@ class ResponseGenerator:
         context: str,
         conversation_context: str,
         conversation: Conversation,
-        contact_info: Optional[Dict[str, str]]
+        contact_info: Optional[Dict[str, str]],
     ) -> str:
         """Build prompt for responses with specific website content knowledge."""
         return f"""
@@ -287,7 +308,7 @@ class ResponseGenerator:
         context: str,
         conversation_context: str,
         conversation: Conversation,
-        contact_info: Optional[Dict[str, str]]
+        contact_info: Optional[Dict[str, str]],
     ) -> str:
         """Build prompt for general knowledge responses."""
         return f"""
@@ -351,12 +372,14 @@ class ResponseGenerator:
         Keep responses professional, concise, and actionable. Maximum 2-3 sentences always.
         """
 
-    async def _generate_with_openrouter_async(self, system_prompt: str, user_prompt: str) -> str:
+    async def _generate_with_openrouter_async(
+        self, system_prompt: str, user_prompt: str
+    ) -> str:
         """
         Async version of OpenRouter fallback.
         """
         import httpx
-        
+
         if not self.openrouter_api_key:
             raise ValueError("OpenRouter API key not configured")
 
@@ -364,29 +387,31 @@ class ResponseGenerator:
         headers = {
             "Authorization": f"Bearer {self.openrouter_api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": getattr(settings, 'SITE_URL', 'http://localhost:8000'),
-            "X-Title": "AAA Accident Solutions LTD Chatbot"
+            "HTTP-Referer": getattr(settings, "SITE_URL", "http://localhost:8000"),
+            "X-Title": "AAA Accident Solutions LTD Chatbot",
         }
 
         payload = {
             "model": self.openrouter_model,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": user_prompt},
             ],
             "max_tokens": 80,
-            "temperature": 0.3
+            "temperature": 0.3,
         }
 
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=payload, headers=headers, timeout=30)
             response.raise_for_status()
             data = response.json()
-            
-        raw_response = data['choices'][0]['message']['content'].strip()
+
+        raw_response = data["choices"][0]["message"]["content"].strip()
 
         cleaned_response = self._clean_response(raw_response)
-        truncated_response = self._truncate_to_sentences(cleaned_response, max_sentences=3)
+        truncated_response = self._truncate_to_sentences(
+            cleaned_response, max_sentences=3
+        )
         final_response = self._final_cleanup(truncated_response)
 
         return final_response
@@ -402,29 +427,31 @@ class ResponseGenerator:
         headers = {
             "Authorization": f"Bearer {self.openrouter_api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": getattr(settings, 'SITE_URL', 'http://localhost:8000'),
-            "X-Title": "AAA Accident Solutions LTD Chatbot"
+            "HTTP-Referer": getattr(settings, "SITE_URL", "http://localhost:8000"),
+            "X-Title": "AAA Accident Solutions LTD Chatbot",
         }
 
         payload = {
             "model": self.openrouter_model,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": user_prompt},
             ],
             "max_tokens": 80,  # Very strict limit for 2-3 sentences
-            "temperature": 0.3  # Lower temperature for more consistent, concise responses
+            "temperature": 0.3,  # Lower temperature for more consistent, concise responses
         }
 
         response = requests.post(url, json=payload, headers=headers, timeout=30)
         response.raise_for_status()
 
         data = response.json()
-        raw_response = data['choices'][0]['message']['content'].strip()
+        raw_response = data["choices"][0]["message"]["content"].strip()
 
         # Clean and format the response
         cleaned_response = self._clean_response(raw_response)
-        truncated_response = self._truncate_to_sentences(cleaned_response, max_sentences=3)
+        truncated_response = self._truncate_to_sentences(
+            cleaned_response, max_sentences=3
+        )
         final_response = self._final_cleanup(truncated_response)
 
         return final_response
@@ -437,38 +464,40 @@ class ResponseGenerator:
             return "Hello! How can I help you with your car hire needs today?"
 
         # Remove any remaining list markers
-        text = re.sub(r'^\s*[•\-\*]\s+', '', text, flags=re.MULTILINE)
-        text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
-        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+        text = re.sub(r"^\s*[•\-\*]\s+", "", text, flags=re.MULTILINE)
+        text = re.sub(r"^\s*\d+\.\s+", "", text, flags=re.MULTILINE)
+        text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
 
         # Split by newlines and take only the first paragraph (before any list-like content)
-        lines = text.split('\n')
+        lines = text.split("\n")
         clean_lines = []
         for line in lines:
             line = line.strip()
             # Stop at first list-like line or empty line followed by list
-            if (re.match(r'^[•\-\*]\s+', line) or
-                re.match(r'^\d+\.\s+', line) or
-                (line == '' and clean_lines)):  # Empty line after content
+            if (
+                re.match(r"^[•\-\*]\s+", line)
+                or re.match(r"^\d+\.\s+", line)
+                or (line == "" and clean_lines)
+            ):  # Empty line after content
                 break
             if line and len(line) > 3:
                 clean_lines.append(line)
 
-        text = ' '.join(clean_lines)
+        text = " ".join(clean_lines)
 
         # Count sentences - if more than 3, truncate
-        sentences = re.split(r'[.!?]+\s+', text)
+        sentences = re.split(r"[.!?]+\s+", text)
         if len(sentences) > 3:
-            text = '. '.join(sentences[:3])
-            if not text.endswith(('.', '!', '?')):
-                text += '.'
+            text = ". ".join(sentences[:3])
+            if not text.endswith((".", "!", "?")):
+                text += "."
 
         # Final character limit
         if len(text) > 250:
             text = text[:250]
-            last_punct = max(text.rfind('.'), text.rfind('!'), text.rfind('?'))
+            last_punct = max(text.rfind("."), text.rfind("!"), text.rfind("?"))
             if last_punct > 50:
-                text = text[:last_punct + 1]
+                text = text[: last_punct + 1]
 
         return text.strip()
 
@@ -480,29 +509,31 @@ class ResponseGenerator:
             return text.strip()
 
         # Remove bullet points, numbered lists, and markdown formatting
-        text = re.sub(r'^\s*[•\-\*]\s+', '', text, flags=re.MULTILINE)  # Bullet points
-        text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)  # Numbered lists
-        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # Bold markdown
-        text = re.sub(r'^\s*#+\s+', '', text, flags=re.MULTILINE)  # Headers
+        text = re.sub(r"^\s*[•\-\*]\s+", "", text, flags=re.MULTILINE)  # Bullet points
+        text = re.sub(r"^\s*\d+\.\s+", "", text, flags=re.MULTILINE)  # Numbered lists
+        text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)  # Bold markdown
+        text = re.sub(r"^\s*#+\s+", "", text, flags=re.MULTILINE)  # Headers
 
         # Remove lines that look like list items or section headers
-        lines = text.split('\n')
+        lines = text.split("\n")
         clean_lines = []
         for line in lines:
             line = line.strip()
             # Skip list items, headers, and empty lines
-            if (line and
-                not re.match(r'^[•\-\*]\s+', line) and
-                not re.match(r'^\d+\.\s+', line) and
-                not re.match(r'^#+\s+', line) and
-                not line.startswith('**') and
-                len(line) > 5):  # Skip very short lines
+            if (
+                line
+                and not re.match(r"^[•\-\*]\s+", line)
+                and not re.match(r"^\d+\.\s+", line)
+                and not re.match(r"^#+\s+", line)
+                and not line.startswith("**")
+                and len(line) > 5
+            ):  # Skip very short lines
                 clean_lines.append(line)
 
-        text = ' '.join(clean_lines)
+        text = " ".join(clean_lines)
 
         # Split into sentences more reliably
-        sentence_pattern = r'([.!?]+)\s+'
+        sentence_pattern = r"([.!?]+)\s+"
         sentences = re.split(sentence_pattern, text)
 
         if len(sentences) <= 1:  # No sentence endings found
@@ -520,22 +551,28 @@ class ResponseGenerator:
             i += 2
 
         # Add any remaining text as last sentence if no punctuation
-        if i < len(sentences) and sentences[i].strip() and len(sentences[i].strip()) > 5:
+        if (
+            i < len(sentences)
+            and sentences[i].strip()
+            and len(sentences[i].strip()) > 5
+        ):
             reconstructed.append(sentences[i].strip())
 
         # Take only max_sentences
         if len(reconstructed) > max_sentences:
-            truncated = ' '.join(reconstructed[:max_sentences])
+            truncated = " ".join(reconstructed[:max_sentences])
         else:
-            truncated = ' '.join(reconstructed)
+            truncated = " ".join(reconstructed)
 
         # Enforce character limit (approximately 200 chars for 2-3 sentences)
         if len(truncated) > 250:
             # Take first 250 chars and find last complete sentence
             truncated = truncated[:250]
-            last_period = max(truncated.rfind('.'), truncated.rfind('!'), truncated.rfind('?'))
+            last_period = max(
+                truncated.rfind("."), truncated.rfind("!"), truncated.rfind("?")
+            )
             if last_period > 50:  # Only truncate if we have a reasonable sentence
-                truncated = truncated[:last_period + 1]
+                truncated = truncated[: last_period + 1]
 
         return truncated.strip()
 
@@ -548,32 +585,46 @@ class ResponseGenerator:
 
         # Step 1: Look for the most recent complete response after thinking blocks
         # Split by thinking tags and take the last meaningful part
-        thinking_splits = re.split(r'</?think[^>]*>|</?thinking[^>]*>|</?reasoning[^>]*>|</?redacted[^>]*>', response, flags=re.IGNORECASE)
+        thinking_splits = re.split(
+            r"</?think[^>]*>|</?thinking[^>]*>|</?reasoning[^>]*>|</?redacted[^>]*>",
+            response,
+            flags=re.IGNORECASE,
+        )
 
         # Find the last part that looks like a proper response (not thinking content)
         for part in reversed(thinking_splits):
             part = part.strip()
-            if (len(part) > 20 and
-                not part.lower().startswith(('okay', 'let\'s', 'the user', 'i need to', 'maybe', 'also')) and
-                not re.search(r'^(?:conversation|user|response|check|make sure|follow|keep|add)', part.lower()) and
-                re.search(r'(?:hi|hello|welcome|aaa|accident|solutions|car|hire|help|assist)', part.lower())):
+            if (
+                len(part) > 20
+                and not part.lower().startswith(
+                    ("okay", "let's", "the user", "i need to", "maybe", "also")
+                )
+                and not re.search(
+                    r"^(?:conversation|user|response|check|make sure|follow|keep|add)",
+                    part.lower(),
+                )
+                and re.search(
+                    r"(?:hi|hello|welcome|aaa|accident|solutions|car|hire|help|assist)",
+                    part.lower(),
+                )
+            ):
                 response = part
                 break
 
         # Step 2: Remove any remaining thinking tags and their content
         thinking_patterns = [
-            r'<think[^>]*>.*?</think[^>]*>',
-            r'<thinking[^>]*>.*?</thinking[^>]*>',
-            r'<reasoning[^>]*>.*?</reasoning[^>]*>',
-            r'<redacted_reasoning[^>]*>.*?</redacted_reasoning[^>]*>',
-            r'<redacted[^>]*>.*?</redacted_reasoning[^>]*>',
+            r"<think[^>]*>.*?</think[^>]*>",
+            r"<thinking[^>]*>.*?</thinking[^>]*>",
+            r"<reasoning[^>]*>.*?</reasoning[^>]*>",
+            r"<redacted_reasoning[^>]*>.*?</redacted_reasoning[^>]*>",
+            r"<redacted[^>]*>.*?</redacted_reasoning[^>]*>",
         ]
         for pattern in thinking_patterns:
-            response = re.sub(pattern, '', response, flags=re.IGNORECASE | re.DOTALL)
+            response = re.sub(pattern, "", response, flags=re.IGNORECASE | re.DOTALL)
 
         # Step 3: If we still have thinking content mixed in, try to extract just the response part
         # Look for common response starters and take everything from there
-        lines = response.split('\n')
+        lines = response.split("\n")
         response_lines = []
         in_response = False
 
@@ -583,27 +634,39 @@ class ResponseGenerator:
                 continue
 
             # Start collecting when we find response-like content
-            if (re.search(r'^(?:Hi|Hello|Welcome|Thank|I\'m|We\'re|At|\*\*)', line, re.IGNORECASE) or
-                re.search(r'(?:😊|🤝|welcome|assist|help)', line.lower())):
+            if re.search(
+                r"^(?:Hi|Hello|Welcome|Thank|I\'m|We\'re|At|\*\*)", line, re.IGNORECASE
+            ) or re.search(r"(?:😊|🤝|welcome|assist|help)", line.lower()):
                 in_response = True
                 response_lines.append(line)
             elif in_response:
                 # Stop if we hit thinking patterns
-                if (re.search(r'<(?:think|thinking|reasoning|redacted)', line, re.IGNORECASE) or
-                    re.search(r'^(?:Okay|Let\'s|The user|I need to|Maybe|Also)', line, re.IGNORECASE) or
-                    re.search(r'^(?:conversation|user|response|check|make sure|follow|keep)', line.lower())):
+                if (
+                    re.search(
+                        r"<(?:think|thinking|reasoning|redacted)", line, re.IGNORECASE
+                    )
+                    or re.search(
+                        r"^(?:Okay|Let\'s|The user|I need to|Maybe|Also)",
+                        line,
+                        re.IGNORECASE,
+                    )
+                    or re.search(
+                        r"^(?:conversation|user|response|check|make sure|follow|keep)",
+                        line.lower(),
+                    )
+                ):
                     break
                 else:
                     response_lines.append(line)
 
         if response_lines:
-            response = '\n'.join(response_lines).strip()
+            response = "\n".join(response_lines).strip()
 
         # Step 4: Remove any remaining HTML/XML tags
-        response = re.sub(r'<[^>]+>', '', response)
+        response = re.sub(r"<[^>]+>", "", response)
 
         # Step 5: Clean up whitespace
-        response = re.sub(r'\n\s*\n\s*\n+', '\n\n', response)
+        response = re.sub(r"\n\s*\n\s*\n+", "\n\n", response)
         response = response.strip()
 
         # Step 6: If response is empty or too short, return default

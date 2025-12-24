@@ -12,5 +12,3 @@ app_name = "cms"
 urlpatterns = [
     path("", include(router.urls)),
 ]
-
-

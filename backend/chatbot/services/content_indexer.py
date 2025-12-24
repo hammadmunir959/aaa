@@ -50,36 +50,39 @@ class ContentIndexer:
 
         logger.info(
             "Content indexing completed. Indexed: %d, Updated: %d, Errors: %d",
-            self.indexed_count, self.updated_count, self.error_count
+            self.indexed_count,
+            self.updated_count,
+            self.error_count,
         )
 
         return {
-            'indexed': self.indexed_count,
-            'updated': self.updated_count,
-            'errors': self.error_count
+            "indexed": self.indexed_count,
+            "updated": self.updated_count,
+            "errors": self.error_count,
         }
 
     def _index_blog_posts(self) -> None:
         """Index blog posts"""
         try:
             from blog.models import BlogPost
-            posts = BlogPost.objects.filter(status='published').iterator(chunk_size=500)
+
+            posts = BlogPost.objects.filter(status="published").iterator(chunk_size=500)
 
             for post in posts:
                 self._index_content(
-                    content_type='blog',
+                    content_type="blog",
                     object_id=post.id,
-                    content_object=f'blog.BlogPost.{post.id}',
+                    content_object=f"blog.BlogPost.{post.id}",
                     title=post.title,
                     slug=post.slug,
-                    url=f'/blog/{post.slug}',
+                    url=f"/blog/{post.slug}",
                     content_text=f"{post.title}\n\n{post.content}\n\n{post.excerpt or ''}",
-                    summary=post.excerpt or post.content[:300] + '...',
-                    keywords=post.tags or '',
-                    category='blog',
-                    tags='blog,article,news',
+                    summary=post.excerpt or post.content[:300] + "...",
+                    keywords=post.tags or "",
+                    category="blog",
+                    tags="blog,article,news",
                     priority=8,
-                    content_updated_at=post.updated_at
+                    content_updated_at=post.updated_at,
                 )
         except ImportError:
             logger.warning("Blog app not available for indexing")
@@ -88,7 +91,10 @@ class ContentIndexer:
         """Index vehicle listings"""
         try:
             from vehicles.models import Vehicle
-            vehicles = Vehicle.objects.filter(status='available').iterator(chunk_size=500)
+
+            vehicles = Vehicle.objects.filter(status="available").iterator(
+                chunk_size=500
+            )
 
             for vehicle in vehicles:
                 content_text = f"""
@@ -104,19 +110,19 @@ class ContentIndexer:
                 """
 
                 self._index_content(
-                    content_type='vehicle',
+                    content_type="vehicle",
                     object_id=vehicle.id,
-                    content_object=f'vehicles.Vehicle.{vehicle.id}',
+                    content_object=f"vehicles.Vehicle.{vehicle.id}",
                     title=vehicle.name,
-                    slug=f'vehicle-{vehicle.id}',
-                    url=f'/vehicles/{vehicle.id}',
+                    slug=f"vehicle-{vehicle.id}",
+                    url=f"/vehicles/{vehicle.id}",
                     content_text=content_text,
                     summary=f"{vehicle.name} - {vehicle.get_type_display()} available for hire",
-                    keywords=f'{vehicle.manufacturer},{vehicle.model},{vehicle.get_type_display()},{vehicle.get_transmission_display()},{vehicle.get_fuel_type_display()}',
-                    category='vehicles',
-                    tags=f'vehicle,{vehicle.get_type_display()},{vehicle.get_fuel_type_display()}',
+                    keywords=f"{vehicle.manufacturer},{vehicle.model},{vehicle.get_type_display()},{vehicle.get_transmission_display()},{vehicle.get_fuel_type_display()}",
+                    category="vehicles",
+                    tags=f"vehicle,{vehicle.get_type_display()},{vehicle.get_fuel_type_display()}",
                     priority=9,
-                    content_updated_at=vehicle.updated_at
+                    content_updated_at=vehicle.updated_at,
                 )
         except ImportError:
             logger.warning("Vehicles app not available for indexing")
@@ -126,8 +132,8 @@ class ContentIndexer:
         # Index static service content
         services_content = [
             {
-                'title': 'Accident Replacement Vehicles',
-                'content': '''
+                "title": "Accident Replacement Vehicles",
+                "content": """
                 Accident Replacement Vehicle Service
 
                 We provide immediate replacement vehicles when your car is being repaired following an accident, vandalism, or mechanical failure.
@@ -153,14 +159,14 @@ class ContentIndexer:
                 • Contact information
 
                 Available 24/7 for emergency situations.
-                ''',
-                'keywords': 'accident,replacement,vehicle,insurance,emergency,repair',
-                'category': 'services',
-                'priority': 10
+                """,
+                "keywords": "accident,replacement,vehicle,insurance,emergency,repair",
+                "category": "services",
+                "priority": 10,
             },
             {
-                'title': 'Luxury Car Hire',
-                'content': '''
+                "title": "Luxury Car Hire",
+                "content": """
                 Luxury and Premium Car Hire Service
 
                 Experience the finest vehicles for special occasions, business travel, or personal indulgence.
@@ -187,14 +193,14 @@ class ContentIndexer:
                 • Credit card security deposit
 
                 Luxury vehicles available from £85 per day with chauffeur service.
-                ''',
-                'keywords': 'luxury,premium,chauffeur,executive,wedding,special occasion',
-                'category': 'services',
-                'priority': 9
+                """,
+                "keywords": "luxury,premium,chauffeur,executive,wedding,special occasion",
+                "category": "services",
+                "priority": 9,
             },
             {
-                'title': 'Car Sales & Purchase',
-                'content': '''
+                "title": "Car Sales & Purchase",
+                "content": """
                 Car Sales and Purchase Services
 
                 We offer a comprehensive car sales and purchase service, allowing customers to buy quality vehicles or sell their cars to us.
@@ -251,36 +257,39 @@ class ContentIndexer:
                 8. Vehicle transfer and payment
 
                 Visit our Car Sales page to browse available vehicles or submit a sell request.
-                ''',
-                'keywords': 'car sales,buy car,sell car,purchase vehicle,car buying,car selling,purchase form,sell form,request purchase,submit sell,car sales page,how to buy car,how to sell car',
-                'category': 'services',
-                'priority': 9
-            }
+                """,
+                "keywords": "car sales,buy car,sell car,purchase vehicle,car buying,car selling,purchase form,sell form,request purchase,submit sell,car sales page,how to buy car,how to sell car",
+                "category": "services",
+                "priority": 9,
+            },
         ]
 
         for service in services_content:
-            slug = service['title'].replace(' ', '-').lower()
+            slug = service["title"].replace(" ", "-").lower()
             self._index_content(
-                content_type='service',
-                object_id=hash(service['title']) % 1000000,  # Simple ID generation
+                content_type="service",
+                object_id=hash(service["title"]) % 1000000,  # Simple ID generation
                 content_object=f'service.{service["title"].replace(" ", "_").lower()}',
-                title=service['title'],
+                title=service["title"],
                 slug=slug,
-                url=f'/services/{slug}',
-                content_text=service['content'],
-                summary=service['content'][:200] + '...',
-                keywords=service['keywords'],
-                category=service['category'],
-                tags=service['category'],
-                priority=service['priority'],
-                content_updated_at=timezone.now()
+                url=f"/services/{slug}",
+                content_text=service["content"],
+                summary=service["content"][:200] + "...",
+                keywords=service["keywords"],
+                category=service["category"],
+                tags=service["category"],
+                priority=service["priority"],
+                content_updated_at=timezone.now(),
             )
 
     def _index_car_sales(self) -> None:
         """Index car sales listings"""
         try:
             from car_sales.models import CarListing
-            listings = CarListing.objects.filter(status='published').iterator(chunk_size=500)
+
+            listings = CarListing.objects.filter(status="published").iterator(
+                chunk_size=500
+            )
 
             for listing in listings:
                 content_text = f"""
@@ -301,19 +310,19 @@ class ContentIndexer:
                 """
 
                 self._index_content(
-                    content_type='car_sale',
+                    content_type="car_sale",
                     object_id=listing.id,
-                    content_object=f'car_sales.CarListing.{listing.id}',
+                    content_object=f"car_sales.CarListing.{listing.id}",
                     title=f"{listing.year} {listing.make} {listing.model}",
-                    slug=f'car-sale-{listing.id}',
-                    url=f'/car-sales',
+                    slug=f"car-sale-{listing.id}",
+                    url=f"/car-sales",
                     content_text=content_text,
                     summary=f"{listing.year} {listing.make} {listing.model} - £{listing.price} - {listing.mileage:,} miles",
-                    keywords=f'{listing.make},{listing.model},car sale,buy car,purchase vehicle,{listing.get_fuel_type_display()},{listing.get_transmission_display()}',
-                    category='car_sales',
-                    tags=f'car sale,buy car,{listing.make},{listing.model},{listing.get_fuel_type_display()}',
+                    keywords=f"{listing.make},{listing.model},car sale,buy car,purchase vehicle,{listing.get_fuel_type_display()},{listing.get_transmission_display()}",
+                    category="car_sales",
+                    tags=f"car sale,buy car,{listing.make},{listing.model},{listing.get_fuel_type_display()}",
                     priority=9,
-                    content_updated_at=listing.updated_at
+                    content_updated_at=listing.updated_at,
                 )
 
             # Index the car sales forms page information
@@ -360,19 +369,19 @@ class ContentIndexer:
             """
 
             self._index_content(
-                content_type='car_sales_forms',
+                content_type="car_sales_forms",
                 object_id=999999,  # Special ID for forms page
-                content_object='car_sales.forms_page',
-                title='Car Sales Forms - Purchase and Sell Forms',
-                slug='car-sales-forms',
-                url='/car-sales',
+                content_object="car_sales.forms_page",
+                title="Car Sales Forms - Purchase and Sell Forms",
+                slug="car-sales-forms",
+                url="/car-sales",
                 content_text=forms_content,
-                summary='Information about the purchase request form and sell your car form on the Car Sales page',
-                keywords='car sales forms,purchase form,sell form,request purchase,submit sell,car sales page,how to buy car,how to sell car',
-                category='car_sales',
-                tags='forms,purchase form,sell form,car sales',
+                summary="Information about the purchase request form and sell your car form on the Car Sales page",
+                keywords="car sales forms,purchase form,sell form,request purchase,submit sell,car sales page,how to buy car,how to sell car",
+                category="car_sales",
+                tags="forms,purchase form,sell form,car sales",
                 priority=10,  # High priority for form information
-                content_updated_at=timezone.now()
+                content_updated_at=timezone.now(),
             )
         except ImportError:
             logger.warning("Car sales app not available for indexing")
@@ -381,7 +390,10 @@ class ContentIndexer:
         """Index customer testimonials"""
         try:
             from testimonials.models import Testimonial
-            testimonials = Testimonial.objects.filter(status='approved').iterator(chunk_size=500)
+
+            testimonials = Testimonial.objects.filter(status="approved").iterator(
+                chunk_size=500
+            )
 
             for testimonial in testimonials:
                 content_text = f"""
@@ -398,19 +410,19 @@ class ContentIndexer:
                 """
 
                 self._index_content(
-                    content_type='testimonial',
+                    content_type="testimonial",
                     object_id=testimonial.id,
-                    content_object=f'testimonials.Testimonial.{testimonial.id}',
+                    content_object=f"testimonials.Testimonial.{testimonial.id}",
                     title=f"Testimonial from {testimonial.name}",
-                    slug=f'testimonial-{testimonial.id}',
-                    url=f'/testimonials/{testimonial.id}',
+                    slug=f"testimonial-{testimonial.id}",
+                    url=f"/testimonials/{testimonial.id}",
                     content_text=content_text,
                     summary=f'"{testimonial.feedback[:100]}..." - {testimonial.name}',
                     keywords=f'testimonial,review,feedback,{testimonial.get_service_type_display() if testimonial.service_type else ""}',
-                    category='testimonials',
-                    tags=f'testimonial,review,customer,feedback,{testimonial.rating}stars',
+                    category="testimonials",
+                    tags=f"testimonial,review,customer,feedback,{testimonial.rating}stars",
                     priority=6,
-                    content_updated_at=testimonial.updated_at
+                    content_updated_at=testimonial.updated_at,
                 )
         except ImportError:
             logger.warning("Testimonials app not available for indexing")
@@ -419,6 +431,7 @@ class ContentIndexer:
         """Index FAQ items"""
         try:
             from faq.models import FAQ
+
             faqs = FAQ.objects.filter(is_active=True).iterator(chunk_size=500)
 
             for faq in faqs:
@@ -437,19 +450,19 @@ class ContentIndexer:
                 """
 
                 self._index_content(
-                    content_type='faq',
+                    content_type="faq",
                     object_id=faq.id,
-                    content_object=f'faq.FAQ.{faq.id}',
+                    content_object=f"faq.FAQ.{faq.id}",
                     title=faq.question,
-                    slug=f'faq-{faq.id}',
-                    url=f'/faq/{faq.id}',
+                    slug=f"faq-{faq.id}",
+                    url=f"/faq/{faq.id}",
                     content_text=content_text,
                     summary=f"FAQ: {faq.question[:100]}...",
-                    keywords=f'faq,question,help,support,{faq.get_category_display()}',
+                    keywords=f"faq,question,help,support,{faq.get_category_display()}",
                     category=faq.get_category_display(),
-                    tags=f'faq,help,support,{faq.category}',
+                    tags=f"faq,help,support,{faq.category}",
                     priority=7,
-                    content_updated_at=faq.updated_at
+                    content_updated_at=faq.updated_at,
                 )
         except ImportError:
             logger.warning("FAQ app not available for indexing")
@@ -458,7 +471,10 @@ class ContentIndexer:
         """Index gallery images"""
         try:
             from gallery.models import GalleryImage
-            images = GalleryImage.objects.filter(is_active=True).iterator(chunk_size=500)
+
+            images = GalleryImage.objects.filter(is_active=True).iterator(
+                chunk_size=500
+            )
 
             for image in images:
                 content_text = f"""
@@ -475,19 +491,19 @@ class ContentIndexer:
                 """
 
                 self._index_content(
-                    content_type='gallery',
+                    content_type="gallery",
                     object_id=image.id,
-                    content_object=f'gallery.GalleryImage.{image.id}',
+                    content_object=f"gallery.GalleryImage.{image.id}",
                     title=image.title,
-                    slug=f'gallery-{image.id}',
-                    url=f'/gallery/{image.id}',
+                    slug=f"gallery-{image.id}",
+                    url=f"/gallery/{image.id}",
                     content_text=content_text,
                     summary=image.description or f"Gallery image: {image.title}",
-                    keywords=f'gallery,image,photo,{image.get_category_display()}',
+                    keywords=f"gallery,image,photo,{image.get_category_display()}",
                     category=image.get_category_display(),
-                    tags=f'gallery,image,{image.category}',
+                    tags=f"gallery,image,{image.category}",
                     priority=4,
-                    content_updated_at=image.uploaded_at
+                    content_updated_at=image.uploaded_at,
                 )
         except ImportError:
             logger.warning("Gallery app not available for indexing")
@@ -496,6 +512,7 @@ class ContentIndexer:
         """Index CMS landing pages"""
         try:
             from cms.models import LandingPageConfig
+
             pages = LandingPageConfig.objects.all().iterator(chunk_size=500)
 
             for page in pages:
@@ -513,19 +530,19 @@ class ContentIndexer:
                     content_text += f"\nLocation: Google Maps available"
 
                 self._index_content(
-                    content_type='cms',
+                    content_type="cms",
                     object_id=page.id,
-                    content_object=f'cms.LandingPageConfig.{page.id}',
-                    title='Homepage',
-                    slug='homepage',
-                    url='/',
+                    content_object=f"cms.LandingPageConfig.{page.id}",
+                    title="Homepage",
+                    slug="homepage",
+                    url="/",
                     content_text=content_text,
-                    summary='Welcome to AAA Accident Solutions LTD - Contact information and company details',
-                    keywords='homepage,landing,main,contact,address,phone,email',
-                    category='cms',
-                    tags='homepage,landing,main,contact',
+                    summary="Welcome to AAA Accident Solutions LTD - Contact information and company details",
+                    keywords="homepage,landing,main,contact,address,phone,email",
+                    category="cms",
+                    tags="homepage,landing,main,contact",
                     priority=10,
-                    content_updated_at=page.last_updated
+                    content_updated_at=page.last_updated,
                 )
         except ImportError:
             logger.warning("CMS app not available for indexing")
@@ -571,19 +588,19 @@ class ContentIndexer:
         """
 
         self._index_content(
-            content_type='pricing',
+            content_type="pricing",
             object_id=1,
-            content_object='pricing.info',
-            title='Car Hire Pricing & Rates',
-            slug='pricing',
-            url='/pricing',
+            content_object="pricing.info",
+            title="Car Hire Pricing & Rates",
+            slug="pricing",
+            url="/pricing",
             content_text=pricing_content,
-            summary='Complete pricing guide for all vehicle categories and rental options',
-            keywords='pricing,rates,costs,fees,insurance,discounts,payment',
-            category='pricing',
-            tags='pricing,rates,costs,fees',
+            summary="Complete pricing guide for all vehicle categories and rental options",
+            keywords="pricing,rates,costs,fees,insurance,discounts,payment",
+            category="pricing",
+            tags="pricing,rates,costs,fees",
             priority=9,
-            content_updated_at=timezone.now()
+            content_updated_at=timezone.now(),
         )
 
     def _index_content(
@@ -600,7 +617,7 @@ class ContentIndexer:
         category: str,
         tags: str,
         priority: int,
-        content_updated_at
+        content_updated_at,
     ) -> None:
         """Index a single content item"""
         try:
@@ -608,20 +625,20 @@ class ContentIndexer:
                 content_type=content_type,
                 object_id=object_id,
                 defaults={
-                    'content_object': content_object,
-                    'title': title,
-                    'slug': slug,
-                    'url': url,
-                    'content_text': content_text,
-                    'summary': summary,
-                    'keywords': keywords,
-                    'category': category,
-                    'tags': tags,
-                    'priority': priority,
-                    'content_updated_at': content_updated_at,
-                    'is_active': True,
-                    'is_searchable': True,
-                }
+                    "content_object": content_object,
+                    "title": title,
+                    "slug": slug,
+                    "url": url,
+                    "content_text": content_text,
+                    "summary": summary,
+                    "keywords": keywords,
+                    "category": category,
+                    "tags": tags,
+                    "priority": priority,
+                    "content_updated_at": content_updated_at,
+                    "is_active": True,
+                    "is_searchable": True,
+                },
             )
 
             if created:

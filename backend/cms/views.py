@@ -37,11 +37,15 @@ class LandingPageConfigViewSet(viewsets.ModelViewSet):
         existing = LandingPageConfig.objects.first()
         if existing:
             # Update existing instead of creating new
-            serializer = self.get_serializer(existing, data=request.data, partial=True, context={"request": request})
+            serializer = self.get_serializer(
+                existing, data=request.data, partial=True, context={"request": request}
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = self.get_serializer(data=request.data, context={"request": request})
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -50,7 +54,9 @@ class LandingPageConfigViewSet(viewsets.ModelViewSet):
         """Update config with request context."""
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial, context={"request": request})
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -92,7 +98,9 @@ class TeamMemberViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         """List team members with request context."""
         queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True, context={"request": request})
+        serializer = self.get_serializer(
+            queryset, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
@@ -103,7 +111,9 @@ class TeamMemberViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create team member with request context."""
-        serializer = self.get_serializer(data=request.data, context={"request": request})
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -112,8 +122,9 @@ class TeamMemberViewSet(viewsets.ModelViewSet):
         """Update team member with request context."""
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial, context={"request": request})
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
-

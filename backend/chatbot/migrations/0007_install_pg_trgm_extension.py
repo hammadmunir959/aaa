@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chatbot', '0004_add_content_index'),
+        ("chatbot", "0004_add_content_index"),
     ]
 
     operations = [

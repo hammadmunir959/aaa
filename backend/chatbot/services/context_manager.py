@@ -16,7 +16,7 @@ from ..models import ChatbotContext
 
 logger = logging.getLogger(__name__)
 
-CONTEXT_CACHE_PREFIX = 'chatbot_context_sections'
+CONTEXT_CACHE_PREFIX = "chatbot_context_sections"
 
 
 def invalidate_context_sections_cache() -> None:
@@ -32,9 +32,9 @@ def _get_cached_context_sections() -> Dict[str, Dict[str, str]]:
     sections: Dict[str, Dict[str, str]] = {}
     for context in ChatbotContext.objects.filter(is_active=True):
         sections[context.section] = {
-            'title': context.title,
-            'content': context.content,
-            'keywords': context.get_keywords_list()
+            "title": context.title,
+            "content": context.content,
+            "keywords": context.get_keywords_list(),
         }
     return sections
 
@@ -72,7 +72,9 @@ class ContextManager:
         """
         return self.context_sections.get(intent)
 
-    def find_relevant_contexts(self, message: str, max_results: int = 3) -> List[Dict[str, str]]:
+    def find_relevant_contexts(
+        self, message: str, max_results: int = 3
+    ) -> List[Dict[str, str]]:
         """
         Find context sections most relevant to a message based on keyword matching.
 
@@ -87,7 +89,7 @@ class ContextManager:
         scored_contexts = []
 
         for section_key, context_data in self.context_sections.items():
-            keywords = context_data.get('keywords', [])
+            keywords = context_data.get("keywords", [])
             score = self._calculate_context_relevance(message_lower, keywords)
             if score > 0:
                 scored_contexts.append((context_data, score))
@@ -96,7 +98,9 @@ class ContextManager:
         scored_contexts.sort(key=lambda x: x[1], reverse=True)
         return [context for context, score in scored_contexts[:max_results]]
 
-    def _calculate_context_relevance(self, message_lower: str, keywords: List[str]) -> float:
+    def _calculate_context_relevance(
+        self, message_lower: str, keywords: List[str]
+    ) -> float:
         """
         Calculate relevance score for a context section based on keyword matches.
 
@@ -135,7 +139,7 @@ class ContextManager:
             Context content string or None if section not found
         """
         context = self.get_context_for_intent(section)
-        return context.get('content') if context else None
+        return context.get("content") if context else None
 
     def get_context_title(self, section: str) -> Optional[str]:
         """
@@ -148,7 +152,7 @@ class ContextManager:
             Context title string or None if section not found
         """
         context = self.get_context_for_intent(section)
-        return context.get('title') if context else None
+        return context.get("title") if context else None
 
     def list_available_contexts(self) -> List[str]:
         """

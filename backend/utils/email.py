@@ -35,7 +35,9 @@ class EmailService:
         message.attach_alternative(html_body, "text/html")
         message.send(fail_silently=fail_silently)
 
-    def send_otp_email(self, email: str, otp_code: str, *, purpose: str = "verification") -> None:
+    def send_otp_email(
+        self, email: str, otp_code: str, *, purpose: str = "verification"
+    ) -> None:
         template = (
             "emails/otp_email.html"
             if purpose == "verification"
@@ -204,7 +206,9 @@ def send_inquiry_reply(inquiry, *, reply_message: str) -> None:
     )
 
 
-def notify_super_admin_of_admin_request(*, super_admin_email: str, admin_email: str, admin_name: str) -> None:
+def notify_super_admin_of_admin_request(
+    *, super_admin_email: str, admin_email: str, admin_name: str
+) -> None:
     email_service.notify_super_admin_of_admin_request(
         super_admin_email=super_admin_email,
         admin_email=admin_email,

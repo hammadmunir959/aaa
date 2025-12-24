@@ -16,14 +16,18 @@ def clear_theme_cache(sender, instance, **kwargs):
     # Django cache doesn't support wildcard deletion easily, so we'll clear the entire cache
     # or use a version system. For simplicity, we'll just clear relevant date caches
     # by invalidating a version key that clients check
-    
+
     # Set a version/timestamp that changes on event updates
-    cache.set(f"{CACHE_KEY_PREFIX}_version", cache.get(f"{CACHE_KEY_PREFIX}_version", 0) + 1, timeout=None)
-    
+    cache.set(
+        f"{CACHE_KEY_PREFIX}_version",
+        cache.get(f"{CACHE_KEY_PREFIX}_version", 0) + 1,
+        timeout=None,
+    )
+
     # Also clear today's cache immediately
     from django.utils import timezone
     from theming.services.theme_resolver import _today_local_date
+
     today = _today_local_date()
     cache_key = f"{CACHE_KEY_PREFIX}_event_{today.isoformat()}"
     cache.delete(cache_key)
-

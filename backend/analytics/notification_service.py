@@ -1,6 +1,7 @@
 """
 Helper service for creating notifications (ActivityLog entries with recipient).
 """
+
 from typing import Optional
 from django.contrib.contenttypes.models import ContentType
 from .models import ActivityLog
@@ -12,15 +13,15 @@ def create_notification(
     activity_type: str,
     description: str,
     actor_user: Optional[User] = None,
-    notification_type: str = 'info',
-    priority: str = 'medium',
+    notification_type: str = "info",
+    priority: str = "medium",
     action_url: Optional[str] = None,
     content_object=None,
     expires_at=None,
 ) -> ActivityLog:
     """
     Create a notification (ActivityLog entry with recipient).
-    
+
     Args:
         recipient: User who should receive the notification
         activity_type: Type of activity (from ActivityLog.ACTIVITY_TYPES)
@@ -31,17 +32,17 @@ def create_notification(
         action_url: URL to navigate to when clicked
         content_object: Related object (GenericForeignKey)
         expires_at: Optional expiration datetime
-        
+
     Returns:
         Created ActivityLog instance
     """
     content_type = None
     object_id = None
-    
+
     if content_object:
         content_type = ContentType.objects.get_for_model(content_object)
         object_id = content_object.pk
-    
+
     notification = ActivityLog.objects.create(
         user=actor_user,
         recipient=recipient,
@@ -49,12 +50,12 @@ def create_notification(
         description=description,
         notification_type=notification_type,
         priority=priority,
-        action_url=action_url or '',
+        action_url=action_url or "",
         content_type=content_type,
         object_id=object_id,
         expires_at=expires_at,
     )
-    
+
     return notification
 
 
@@ -62,15 +63,15 @@ def create_notification_for_admins(
     activity_type: str,
     description: str,
     actor_user: Optional[User] = None,
-    notification_type: str = 'info',
-    priority: str = 'medium',
+    notification_type: str = "info",
+    priority: str = "medium",
     action_url: Optional[str] = None,
     content_object=None,
     admin_types: Optional[list] = None,
 ) -> list[ActivityLog]:
     """
     Create notifications for all admin users.
-    
+
     Args:
         activity_type: Type of activity
         description: Description of the activity
@@ -80,20 +81,17 @@ def create_notification_for_admins(
         action_url: URL to navigate to
         content_object: Related object
         admin_types: List of admin types to notify (None = all admins)
-        
+
     Returns:
         List of created ActivityLog instances
     """
     from accounts.models import User
-    
+
     if admin_types is None:
         admin_types = [User.ROLE_ADMIN, User.ROLE_SUPER_ADMIN]
-    
-    admins = User.objects.filter(
-        admin_type__in=admin_types,
-        status=User.STATUS_ACTIVE
-    )
-    
+
+    admins = User.objects.filter(admin_type__in=admin_types, status=User.STATUS_ACTIVE)
+
     notifications = []
     for admin in admins:
         notification = create_notification(
@@ -107,6 +105,5 @@ def create_notification_for_admins(
             content_object=content_object,
         )
         notifications.append(notification)
-    
-    return notifications
 
+    return notifications

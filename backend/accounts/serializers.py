@@ -7,6 +7,7 @@ from .models import User, OTPVerification
 
 class AdminRegistrationSerializer(serializers.Serializer):
     """Serializer for admin registration"""
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     admin_type = serializers.ChoiceField(choices=User.ROLE_CHOICES)
@@ -34,8 +35,7 @@ class AdminRegistrationSerializer(serializers.Serializer):
         if value == User.ROLE_SUPER_ADMIN:
             # Check if super admin already exists
             if User.objects.filter(
-                admin_type=User.ROLE_SUPER_ADMIN,
-                is_email_verified=True
+                admin_type=User.ROLE_SUPER_ADMIN, is_email_verified=True
             ).exists():
                 raise serializers.ValidationError(
                     "A Super Admin already exists. Only one is allowed."
@@ -45,76 +45,67 @@ class AdminRegistrationSerializer(serializers.Serializer):
 
 class AdminLoginSerializer(serializers.Serializer):
     """Serializer for admin login"""
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
 
         if email and password:
             user = authenticate(username=email, password=password)
-            
+
             if not user:
-                raise serializers.ValidationError(
-                    "Invalid email or password"
-                )
-            
+                raise serializers.ValidationError("Invalid email or password")
+
             if not user.is_active:
-                raise serializers.ValidationError(
-                    "User account is disabled"
-                )
-            
+                raise serializers.ValidationError("User account is disabled")
+
             if not user.is_admin:
                 raise serializers.ValidationError(
                     "User does not have admin permissions"
                 )
-            
-            attrs['user'] = user
+
+            attrs["user"] = user
             return attrs
         else:
-            raise serializers.ValidationError(
-                "Must include email and password"
-            )
+            raise serializers.ValidationError("Must include email and password")
 
 
 class OTPVerificationSerializer(serializers.Serializer):
     """Serializer for OTP verification"""
+
     email = serializers.EmailField()
     otp_code = serializers.CharField(max_length=6, min_length=6)
-    purpose = serializers.CharField(max_length=20, default='verification')
+    purpose = serializers.CharField(max_length=20, default="verification")
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        otp_code = attrs.get('otp_code')
-        purpose = attrs.get('purpose')
+        email = attrs.get("email")
+        otp_code = attrs.get("otp_code")
+        purpose = attrs.get("purpose")
 
         # Find valid OTP
         otp = OTPVerification.objects.filter(
-            email=email,
-            otp_code=otp_code,
-            purpose=purpose,
-            is_used=False
+            email=email, otp_code=otp_code, purpose=purpose, is_used=False
         ).first()
 
         if not otp:
-            raise serializers.ValidationError(
-                "Invalid or expired OTP"
-            )
+            raise serializers.ValidationError("Invalid or expired OTP")
 
         # Check if expired
         from django.utils import timezone
-        if otp.expires_at < timezone.now():
-            raise serializers.ValidationError(
-                "OTP has expired"
-            )
 
-        attrs['otp'] = otp
+        if otp.expires_at < timezone.now():
+            raise serializers.ValidationError("OTP has expired")
+
+        attrs["otp"] = otp
         return attrs
 
 
 class PasswordResetSerializer(serializers.Serializer):
     """Serializer for password reset"""
+
     email = serializers.EmailField()
     otp_code = serializers.CharField(max_length=6, min_length=6)
     new_password = serializers.CharField(write_only=True, min_length=8)
@@ -128,40 +119,41 @@ class PasswordResetSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        otp_code = attrs.get('otp_code')
+        email = attrs.get("email")
+        otp_code = attrs.get("otp_code")
 
         # Find valid OTP for password reset
         otp = OTPVerification.objects.filter(
-            email=email,
-            otp_code=otp_code,
-            purpose='password_reset',
-            is_used=False
+            email=email, otp_code=otp_code, purpose="password_reset", is_used=False
         ).first()
 
         if not otp:
-            raise serializers.ValidationError(
-                "Invalid or expired OTP"
-            )
+            raise serializers.ValidationError("Invalid or expired OTP")
 
         # Check if expired
         from django.utils import timezone
-        if otp.expires_at < timezone.now():
-            raise serializers.ValidationError(
-                "OTP has expired"
-            )
 
-        attrs['otp'] = otp
+        if otp.expires_at < timezone.now():
+            raise serializers.ValidationError("OTP has expired")
+
+        attrs["otp"] = otp
         return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for user data"""
+
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'first_name', 'last_name', 
-            'admin_type', 'status', 'phone', 'is_email_verified',
-            'created_at'
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "admin_type",
+            "status",
+            "phone",
+            "is_email_verified",
+            "created_at",
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ["id", "created_at"]

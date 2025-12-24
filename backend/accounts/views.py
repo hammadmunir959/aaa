@@ -15,8 +15,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User, OTPVerification
 from .serializers import (
-    AdminRegistrationSerializer, AdminLoginSerializer, 
-    OTPVerificationSerializer, PasswordResetSerializer, UserSerializer
+    AdminRegistrationSerializer,
+    AdminLoginSerializer,
+    OTPVerificationSerializer,
+    PasswordResetSerializer,
+    UserSerializer,
 )
 from utils.email import send_otp_email, notify_super_admin_of_admin_request
 from utils.permissions import IsSuperAdmin
@@ -26,24 +29,22 @@ from utils.security_logging import SecurityAuditLogger
 
 def _generate_otp(length: int = 6) -> str:
     """Generate numeric OTP of given length."""
-    return ''.join(random.choices(string.digits, k=length))
+    return "".join(random.choices(string.digits, k=length))
 
 
 def _issue_otp(email: str, purpose: str) -> str:
     """Create (or refresh) an OTP for a specific purpose and email."""
     # Mark existing unused OTPs for the same purpose as used
-    OTPVerification.objects.filter(
-        email=email,
-        purpose=purpose,
-        is_used=False
-    ).update(is_used=True)
+    OTPVerification.objects.filter(email=email, purpose=purpose, is_used=False).update(
+        is_used=True
+    )
 
     otp_code = _generate_otp()
     OTPVerification.objects.create(
         email=email,
         otp_code=otp_code,
         purpose=purpose,
-        expires_at=timezone.now() + timedelta(minutes=10)
+        expires_at=timezone.now() + timedelta(minutes=10),
     )
     send_otp_email(email, otp_code, purpose=purpose)
     return otp_code
@@ -52,10 +53,9 @@ def _issue_otp(email: str, purpose: str) -> str:
 def _notify_super_admin_about_admin(user: User) -> None:
     """Notify super admin about new admin registration."""
     super_admin = User.objects.filter(
-        admin_type=User.ROLE_SUPER_ADMIN,
-        is_email_verified=True
+        admin_type=User.ROLE_SUPER_ADMIN, is_email_verified=True
     ).first()
-    
+
     if super_admin:
         notify_super_admin_of_admin_request(
             super_admin_email=super_admin.email,
@@ -64,23 +64,23 @@ def _notify_super_admin_about_admin(user: User) -> None:
         )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def register_admin(request):
     """Register a new admin or super admin user."""
     serializer = AdminRegistrationSerializer(data=request.data)
-    
+
     if not serializer.is_valid():
         return error_response(
             message="Validation failed",
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="VALIDATION_ERROR",
-            details=serializer.errors
+            details=serializer.errors,
         )
 
     validated_data = serializer.validated_data
-    email = validated_data['email']
-    
+    email = validated_data["email"]
+
     try:
         with transaction.atomic():
             # Remove any existing unverified user with same email
@@ -93,36 +93,36 @@ def register_admin(request):
             user = User.objects.create_user(
                 username=email,
                 email=email,
-                password=validated_data['password'],
-                first_name=validated_data.get('first_name', ''),
-                last_name=validated_data.get('last_name', ''),
-                phone=validated_data.get('phone', ''),
-                admin_type=validated_data['admin_type'],
+                password=validated_data["password"],
+                first_name=validated_data.get("first_name", ""),
+                last_name=validated_data.get("last_name", ""),
+                phone=validated_data.get("phone", ""),
+                admin_type=validated_data["admin_type"],
                 status=User.STATUS_PENDING,
                 is_active=True,
-                is_email_verified=False
+                is_email_verified=False,
             )
 
             # Issue OTP for email verification
-            _issue_otp(email, 'verification')
+            _issue_otp(email, "verification")
 
             # Log security event
             SecurityAuditLogger.log_user_registration(
                 user_id=user.id,
                 email=email,
-                admin_type=validated_data['admin_type'],
-                ip_address=request.META.get('REMOTE_ADDR', ''),
-                user_agent=request.META.get('HTTP_USER_AGENT', '')
+                admin_type=validated_data["admin_type"],
+                ip_address=request.META.get("REMOTE_ADDR", ""),
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
             )
 
             return success_response(
                 data={
-                    'user_id': user.id,
-                    'status': user.status,
-                    'message': 'Registration successful. Please verify your email.'
+                    "user_id": user.id,
+                    "status": user.status,
+                    "message": "Registration successful. Please verify your email.",
                 },
                 message="Registration successful",
-                status_code=status.HTTP_201_CREATED
+                status_code=status.HTTP_201_CREATED,
             )
 
     except Exception as e:
@@ -130,95 +130,94 @@ def register_admin(request):
             message="Registration failed",
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="REGISTRATION_ERROR",
-            details=str(e)
+            details=str(e),
         )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def login_admin(request):
     """Login admin user and return JWT tokens."""
     serializer = AdminLoginSerializer(data=request.data)
-    
+
     if not serializer.is_valid():
         return error_response(
             message="Invalid credentials",
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="INVALID_CREDENTIALS",
-            details=serializer.errors
+            details=serializer.errors,
         )
 
-    user = serializer.validated_data['user']
-    
+    user = serializer.validated_data["user"]
+
     # Check email verification
     if not user.is_email_verified:
         return error_response(
             message="Please verify your email before logging in",
             status_code=status.HTTP_403_FORBIDDEN,
-            error_code="EMAIL_NOT_VERIFIED"
+            error_code="EMAIL_NOT_VERIFIED",
         )
-    
+
     # Check user status
     if user.status != User.STATUS_ACTIVE:
         return error_response(
             message=f"Account status: {user.get_status_display()}",
             status_code=status.HTTP_403_FORBIDDEN,
             error_code="ACCOUNT_NOT_ACTIVE",
-            details={'status': user.status}
+            details={"status": user.status},
         )
 
     # Generate JWT tokens
     refresh = RefreshToken.for_user(user)
-    
+
     # Log security event
     SecurityAuditLogger.log_successful_login(
-        user=user,
-        ip_address=request.META.get('REMOTE_ADDR', '')
+        user=user, ip_address=request.META.get("REMOTE_ADDR", "")
     )
 
     return success_response(
         data={
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'admin_type': user.admin_type,
-                'status': user.status,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'is_email_verified': user.is_email_verified,
-            }
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "admin_type": user.admin_type,
+                "status": user.status,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_email_verified": user.is_email_verified,
+            },
         },
-        message="Login successful"
+        message="Login successful",
     )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def verify_otp(request):
     """Verify OTP for email verification or password reset."""
     serializer = OTPVerificationSerializer(data=request.data)
-    
+
     if not serializer.is_valid():
         return error_response(
             message="Invalid OTP",
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="INVALID_OTP",
-            details=serializer.errors
+            details=serializer.errors,
         )
 
-    otp = serializer.validated_data['otp']
-    email = serializer.validated_data['email']
-    purpose = serializer.validated_data['purpose']
-    
+    otp = serializer.validated_data["otp"]
+    email = serializer.validated_data["email"]
+    purpose = serializer.validated_data["purpose"]
+
     try:
         with transaction.atomic():
             # Mark OTP as used
             otp.is_used = True
             otp.save()
 
-            if purpose == 'verification':
+            if purpose == "verification":
                 # Verify user email
                 user = User.objects.filter(email=email).first()
                 if user:
@@ -226,37 +225,35 @@ def verify_otp(request):
                     # For super admin, activate immediately
                     if user.admin_type == User.ROLE_SUPER_ADMIN:
                         user.status = User.STATUS_ACTIVE
-                    
+
                     user.save()
 
                     # Notify super admin for regular admin registrations (only after verification)
                     if user.admin_type == User.ROLE_ADMIN:
                         _notify_super_admin_about_admin(user)
 
-            return success_response(
-                message="OTP verified successfully"
-            )
+            return success_response(message="OTP verified successfully")
 
     except Exception as e:
         return error_response(
             message="OTP verification failed",
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="VERIFICATION_ERROR",
-            details=str(e)
+            details=str(e),
         )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def resend_verification_otp(request):
     """Resend verification OTP."""
-    email = request.data.get('email')
-    
+    email = request.data.get("email")
+
     if not email:
         return error_response(
             message="Email is required",
             status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="EMAIL_REQUIRED"
+            error_code="EMAIL_REQUIRED",
         )
 
     user = User.objects.filter(email=email).first()
@@ -264,41 +261,39 @@ def resend_verification_otp(request):
         return error_response(
             message="User not found",
             status_code=status.HTTP_404_NOT_FOUND,
-            error_code="USER_NOT_FOUND"
+            error_code="USER_NOT_FOUND",
         )
 
     if user.is_email_verified:
         return error_response(
             message="Email already verified",
             status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="EMAIL_ALREADY_VERIFIED"
+            error_code="EMAIL_ALREADY_VERIFIED",
         )
 
     try:
-        _issue_otp(email, 'verification')
-        return success_response(
-            message="OTP sent successfully"
-        )
+        _issue_otp(email, "verification")
+        return success_response(message="OTP sent successfully")
     except Exception as e:
         return error_response(
             message="Failed to send OTP",
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="OTP_SEND_ERROR",
-            details=str(e)
+            details=str(e),
         )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def request_password_reset(request):
     """Request password reset OTP."""
-    email = request.data.get('email')
-    
+    email = request.data.get("email")
+
     if not email:
         return error_response(
             message="Email is required",
             status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="EMAIL_REQUIRED"
+            error_code="EMAIL_REQUIRED",
         )
 
     user = User.objects.filter(email=email, is_email_verified=True).first()
@@ -309,37 +304,35 @@ def request_password_reset(request):
         )
 
     try:
-        _issue_otp(email, 'password_reset')
-        return success_response(
-            message="Password reset code sent successfully"
-        )
+        _issue_otp(email, "password_reset")
+        return success_response(message="Password reset code sent successfully")
     except Exception as e:
         return error_response(
             message="Failed to send reset code",
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="RESET_CODE_ERROR",
-            details=str(e)
+            details=str(e),
         )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def reset_password(request):
     """Reset password using OTP."""
     serializer = PasswordResetSerializer(data=request.data)
-    
+
     if not serializer.is_valid():
         return error_response(
             message="Invalid data",
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="INVALID_DATA",
-            details=serializer.errors
+            details=serializer.errors,
         )
 
-    otp = serializer.validated_data['otp']
-    email = serializer.validated_data['email']
-    new_password = serializer.validated_data['new_password']
-    
+    otp = serializer.validated_data["otp"]
+    email = serializer.validated_data["email"]
+    new_password = serializer.validated_data["new_password"]
+
     try:
         with transaction.atomic():
             # Mark OTP as used
@@ -356,24 +349,22 @@ def reset_password(request):
                 SecurityAuditLogger.log_password_reset(
                     user_id=user.id,
                     email=email,
-                    ip_address=request.META.get('REMOTE_ADDR', ''),
-                    user_agent=request.META.get('HTTP_USER_AGENT', '')
+                    ip_address=request.META.get("REMOTE_ADDR", ""),
+                    user_agent=request.META.get("HTTP_USER_AGENT", ""),
                 )
 
-            return success_response(
-                message="Password reset successfully"
-            )
+            return success_response(message="Password reset successfully")
 
     except Exception as e:
         return error_response(
             message="Password reset failed",
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="PASSWORD_RESET_ERROR",
-            details=str(e)
+            details=str(e),
         )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 @ensure_csrf_cookie  # Ensure CSRF cookie is set
 def csrf_token_view(request):
@@ -383,52 +374,44 @@ def csrf_token_view(request):
     """
     # Get the CSRF token - this automatically sets the csrftoken cookie
     csrf_token = get_token(request)
-    
+
     # Return the token directly in JSON format (not wrapped)
     # Frontend expects: {"csrfToken": "..."}
-    return Response(
-        {'csrfToken': csrf_token},
-        status=status.HTTP_200_OK
-    )
+    return Response({"csrfToken": csrf_token}, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     """Get current authenticated user data."""
     serializer = UserSerializer(request.user)
     return success_response(
-        data=serializer.data,
-        message="User data retrieved successfully"
+        data=serializer.data, message="User data retrieved successfully"
     )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsSuperAdmin])
 def list_admin_requests(request):
     """List admin registration requests (Super Admin only)."""
-    status_param = request.query_params.get('status')
-    
+    status_param = request.query_params.get("status")
+
     # Base query: Admins only, and email must be verified
-    users = User.objects.filter(
-        admin_type=User.ROLE_ADMIN,
-        is_email_verified=True
-    )
+    users = User.objects.filter(admin_type=User.ROLE_ADMIN, is_email_verified=True)
 
     # Apply status filter if provided
     if status_param:
         users = users.filter(status=status_param)
-        
-    users = users.order_by('-created_at')
-    
+
+    users = users.order_by("-created_at")
+
     serializer = UserSerializer(users, many=True)
     return success_response(
-        data=serializer.data,
-        message="Admin requests retrieved successfully"
+        data=serializer.data, message="Admin requests retrieved successfully"
     )
 
 
-@api_view(['PATCH'])
+@api_view(["PATCH"])
 @permission_classes([IsSuperAdmin])
 def update_admin_status(request, user_id):
     """Update admin status (Super Admin only)."""
@@ -438,15 +421,15 @@ def update_admin_status(request, user_id):
         return error_response(
             message="Admin user not found",
             status_code=status.HTTP_404_NOT_FOUND,
-            error_code="USER_NOT_FOUND"
+            error_code="USER_NOT_FOUND",
         )
 
-    new_status = request.data.get('status')
+    new_status = request.data.get("status")
     if new_status not in dict(User.STATUS_CHOICES):
         return error_response(
             message="Invalid status",
             status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="INVALID_STATUS"
+            error_code="INVALID_STATUS",
         )
 
     user.status = new_status
@@ -458,17 +441,16 @@ def update_admin_status(request, user_id):
         target_user_id=user.id,
         old_status=user.status,
         new_status=new_status,
-        ip_address=request.META.get('REMOTE_ADDR', ''),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')
+        ip_address=request.META.get("REMOTE_ADDR", ""),
+        user_agent=request.META.get("HTTP_USER_AGENT", ""),
     )
 
     return success_response(
-        data=UserSerializer(user).data,
-        message="Admin status updated successfully"
+        data=UserSerializer(user).data, message="Admin status updated successfully"
     )
 
 
-@api_view(['DELETE'])
+@api_view(["DELETE"])
 @permission_classes([IsSuperAdmin])
 def delete_admin(request, user_id):
     """Delete an admin user (Super Admin only)."""
@@ -478,29 +460,27 @@ def delete_admin(request, user_id):
         return error_response(
             message="User not found",
             status_code=status.HTTP_404_NOT_FOUND,
-            error_code="USER_NOT_FOUND"
+            error_code="USER_NOT_FOUND",
         )
-    
+
     # Prevent self-deletion
     if user.id == request.user.id:
         return error_response(
             message="You cannot delete your own account",
             status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="SELF_DELETION_NOT_ALLOWED"
+            error_code="SELF_DELETION_NOT_ALLOWED",
         )
-        
+
     # Log security event before deletion (to capture who did it)
     SecurityAuditLogger.log_admin_status_change(
         admin_user_id=request.user.id,
         target_user_id=user.id,
         old_status=user.status,
-        new_status='deleted',
-        ip_address=request.META.get('REMOTE_ADDR', ''),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')
+        new_status="deleted",
+        ip_address=request.META.get("REMOTE_ADDR", ""),
+        user_agent=request.META.get("HTTP_USER_AGENT", ""),
     )
-    
+
     user.delete()
-    
-    return success_response(
-        message="Admin user deleted successfully"
-    )
+
+    return success_response(message="Admin user deleted successfully")
