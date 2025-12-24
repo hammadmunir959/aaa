@@ -6,8 +6,8 @@ import gzip
 from io import BytesIO
 from typing import Callable
 
-from django.utils.deprecation import MiddlewareMixin
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 
 class GZipCompressionMiddleware(MiddlewareMixin):

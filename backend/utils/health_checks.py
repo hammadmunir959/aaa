@@ -2,11 +2,12 @@
 Health check utilities for monitoring system status.
 """
 
-from typing import Dict, Any, Optional
-from django.db import connection
-from django.core.cache import cache
-from django.conf import settings
 import time
+from typing import Any, Dict, Optional
+
+from django.conf import settings
+from django.core.cache import cache
+from django.db import connection
 
 
 def check_database() -> Dict[str, Any]:

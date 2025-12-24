@@ -7,13 +7,13 @@ Extracted from the monolithic services.py file for better maintainability.
 
 import logging
 import re
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 from django.utils import timezone
 
-from ..models import Conversation, ContactInfo
-from .context_manager import ContextManager
+from ..models import ContactInfo, Conversation
 from .content_search import ContentSearchService
+from .context_manager import ContextManager
 from .response_generator import ResponseGenerator
 
 logger = logging.getLogger(__name__)

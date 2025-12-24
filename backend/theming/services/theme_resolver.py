@@ -1,7 +1,9 @@
-from django.utils import timezone
-from django.core.cache import cache
-from django.conf import settings
 from datetime import date
+
+from django.conf import settings
+from django.core.cache import cache
+from django.utils import timezone
+
 from config.themes import THEMES
 from theming.models import Event, Theme
 

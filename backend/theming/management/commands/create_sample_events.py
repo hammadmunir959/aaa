@@ -1,6 +1,8 @@
+from datetime import date, timedelta
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from datetime import date, timedelta
+
 from theming.models import Event
 
 

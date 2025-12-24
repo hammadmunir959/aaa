@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from datetime import timedelta
+import json
 import random
 import string
-
-import json
+from datetime import timedelta
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -13,7 +12,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -21,15 +20,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, OTPVerification
-from utils.email import send_otp_email, notify_super_admin_of_admin_request
-from utils.permissions import IsSuperAdmin
-from utils.response import success_response, error_response
+from utils.email import notify_super_admin_of_admin_request, send_otp_email
 from utils.exceptions import (
-    ValidationError as CustomValidationError,
-    NotFoundError,
     ConflictError,
+    NotFoundError,
 )
+from utils.exceptions import ValidationError as CustomValidationError
+from utils.permissions import IsSuperAdmin
+from utils.response import error_response, success_response
 from utils.security import (
     sanitize_email,
     sanitize_string,
@@ -37,6 +35,8 @@ from utils.security import (
     validate_xss_patterns,
 )
 from utils.security_logging import SecurityAuditLogger
+
+from .models import OTPVerification, User
 
 
 def get_client_ip(request):

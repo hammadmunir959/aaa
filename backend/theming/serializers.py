@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from theming.models import Theme, Event
+
+from theming.models import Event, Theme
 
 
 class ThemeSerializer(serializers.Serializer):

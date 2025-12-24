@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from .models import Testimonial
 from utils.spam_protection import check_rate_limit
+
+from .models import Testimonial
 
 
 class TestimonialSerializer(serializers.ModelSerializer):

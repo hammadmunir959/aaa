@@ -1,6 +1,7 @@
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
 from django.core.cache import cache
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
 from theming.models import Event, Theme
 
 CACHE_KEY_PREFIX = "active_theme"
@@ -26,6 +27,7 @@ def clear_theme_cache(sender, instance, **kwargs):
 
     # Also clear today's cache immediately
     from django.utils import timezone
+
     from theming.services.theme_resolver import _today_local_date
 
     today = _today_local_date()

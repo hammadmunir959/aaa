@@ -2,8 +2,9 @@
 Django app configuration for config app.
 """
 
-from django.apps import AppConfig
 import os
+
+from django.apps import AppConfig
 
 
 class ConfigConfig(AppConfig):
@@ -16,6 +17,7 @@ class ConfigConfig(AppConfig):
         """Called when Django starts."""
         # Validate environment variables on startup
         from django.conf import settings
+
         from utils.env_validation import validate_environment_on_startup
 
         # Only validate if explicitly enabled or in production

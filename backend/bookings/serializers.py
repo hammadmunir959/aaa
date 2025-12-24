@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from vehicles.models import Vehicle
-from .models import Claim, ClaimDocument
 from utils.spam_protection import check_rate_limit
+from vehicles.models import Vehicle
+
+from .models import Claim, ClaimDocument
 
 
 class ClaimDocumentSerializer(serializers.ModelSerializer):

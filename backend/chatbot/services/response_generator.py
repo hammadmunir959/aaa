@@ -7,10 +7,10 @@ Extracted from the monolithic services.py file for better maintainability.
 
 import logging
 import re
-import requests
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 import groq
+import requests
 from django.conf import settings
 
 from ..models import Conversation

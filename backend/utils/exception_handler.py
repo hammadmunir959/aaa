@@ -5,22 +5,24 @@ Custom exception handler for DRF to provide standardized error responses.
 import logging
 from typing import Any
 
-from django.http import Http404
 from django.core.exceptions import (
     PermissionDenied,
-    ValidationError as DjangoValidationError,
 )
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import (
     APIException,
     AuthenticationFailed,
-    NotAuthenticated,
-    PermissionDenied as DRFPermissionDenied,
-    ValidationError as DRFValidationError,
-    NotFound,
     MethodNotAllowed,
+    NotAuthenticated,
+    NotFound,
+)
+from rest_framework.exceptions import PermissionDenied as DRFPermissionDenied
+from rest_framework.exceptions import (
     Throttled,
 )
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.views import exception_handler
 
 from .exceptions import APIException as CustomAPIException

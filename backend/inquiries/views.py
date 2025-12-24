@@ -5,16 +5,17 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from analytics.notification_service import create_notification_for_admins
+from utils.email import notify_inquiry_team, send_inquiry_reply
+from utils.permissions import IsAdmin
+from utils.spam_protection import generate_simple_captcha
+
 from .models import Inquiry
 from .serializers import (
     InquiryCreateSerializer,
     InquiryReplySerializer,
     InquirySerializer,
 )
-from utils.permissions import IsAdmin
-from utils.email import notify_inquiry_team, send_inquiry_reply
-from utils.spam_protection import generate_simple_captcha
-from analytics.notification_service import create_notification_for_admins
 
 
 class InquiryFilter(filters.FilterSet):

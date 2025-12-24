@@ -4,6 +4,7 @@ Security audit logging utilities.
 
 import logging
 from typing import Any, Dict, Optional
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 

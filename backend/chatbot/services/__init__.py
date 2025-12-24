@@ -4,10 +4,10 @@ Chatbot Services Package
 This package contains the modularized chatbot services, broken down from the monolithic services.py file.
 """
 
-from .content_indexer import ContentIndexer
 from .chatbot_service import SimpleChatbotService
-from .context_manager import ContextManager, invalidate_context_sections_cache
+from .content_indexer import ContentIndexer
 from .content_search import ContentSearchService, invalidate_content_search_cache
+from .context_manager import ContextManager, invalidate_context_sections_cache
 from .response_generator import ResponseGenerator
 
 __all__ = [

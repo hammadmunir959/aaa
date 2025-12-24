@@ -15,7 +15,6 @@ from .cache import (
     invalidate_dashboard_summary_cache,
 )
 
-
 SUMMARY_MODELS = [
     Vehicle,
     Claim,

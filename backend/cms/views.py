@@ -1,10 +1,11 @@
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
+
+from utils.cache_decorators import cache_api_response
+from utils.permissions import IsAdmin, IsPublicOrAdmin
 
 from .models import LandingPageConfig, TeamMember
 from .serializers import LandingPageConfigSerializer, TeamMemberSerializer
-from utils.permissions import IsAdmin, IsPublicOrAdmin
-from utils.cache_decorators import cache_api_response
 
 
 class LandingPageConfigViewSet(viewsets.ModelViewSet):

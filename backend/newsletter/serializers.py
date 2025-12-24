@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import NewsletterSubscriber, NewsletterCampaign
+
+from .models import NewsletterCampaign, NewsletterSubscriber
 
 
 class NewsletterSubscriberSerializer(serializers.ModelSerializer):

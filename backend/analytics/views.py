@@ -1,29 +1,31 @@
+from datetime import timedelta
+
+from django.db.models import Avg, Case, CharField, Count, Q, Sum, Value, When
+from django.db.models.functions import ExtractHour, TruncDate, TruncMonth
+from django.utils import timezone
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from django.db.models import Avg, Case, CharField, Count, Q, Sum, Value, When
-from django.db.models.functions import ExtractHour, TruncDate, TruncMonth
-from django.utils import timezone
-from datetime import timedelta
 
-from vehicles.models import Vehicle
 from bookings.models import Claim
-from testimonials.models import Testimonial
 from car_sales.models import CarListing, CarPurchaseRequest
-from newsletter.models import NewsletterSubscriber
-from gallery.models import GalleryImage
 from faq.models import FAQ
+from gallery.models import GalleryImage
 from inquiries.models import Inquiry
-from .models import PageView, ActivityLog, VisitorSession
-from .serializers import ActivityLogSerializer, NotificationSerializer
-from .utils import get_activity_icon
+from newsletter.models import NewsletterSubscriber
+from testimonials.models import Testimonial
+from utils.cache import cache_result
+from vehicles.models import Vehicle
+
 from .cache import (
     BOOKING_TRENDS_CACHE_PREFIX,
     DASHBOARD_SUMMARY_CACHE_PREFIX,
 )
-from utils.cache import cache_result
+from .models import ActivityLog, PageView, VisitorSession
+from .serializers import ActivityLogSerializer, NotificationSerializer
+from .utils import get_activity_icon
 
 SEARCH_DOMAINS = ["google", "bing", "yahoo", "duckduckgo"]
 SOCIAL_DOMAINS = ["facebook", "instagram", "linkedin", "twitter", "t.co", "x.com"]
@@ -666,8 +668,9 @@ def web_analytics_overview(request):
 @permission_classes([IsAuthenticated])
 def chatbot_stats(request):
     """Get chatbot usage statistics"""
-    from chatbot.models import Conversation, ConversationMessage
     from django.db.models import Avg, Count
+
+    from chatbot.models import Conversation, ConversationMessage
 
     # Basic stats
     total_conversations = Conversation.objects.count()

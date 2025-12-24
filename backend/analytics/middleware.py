@@ -1,10 +1,12 @@
-import uuid
-from django.utils import timezone
-from django.conf import settings
 import logging
+import uuid
 from typing import Optional
 
+from django.conf import settings
+from django.utils import timezone
+
 from accounts.models import User
+
 from .models import ActivityLog, PageView, VisitorSession
 
 logger = logging.getLogger(__name__)

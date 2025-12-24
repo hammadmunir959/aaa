@@ -3,9 +3,12 @@ Helper service for creating notifications (ActivityLog entries with recipient).
 """
 
 from typing import Optional
+
 from django.contrib.contenttypes.models import ContentType
-from .models import ActivityLog
+
 from accounts.models import User
+
+from .models import ActivityLog
 
 
 def create_notification(

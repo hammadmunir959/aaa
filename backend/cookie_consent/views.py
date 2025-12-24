@@ -1,10 +1,11 @@
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import CookieConsent
-from .serializers import CookieConsentSerializer, CookieConsentCreateSerializer
 from utils.permissions import IsAdmin
+
+from .models import CookieConsent
+from .serializers import CookieConsentCreateSerializer, CookieConsentSerializer
 
 
 class CookieConsentViewSet(viewsets.ReadOnlyModelViewSet):

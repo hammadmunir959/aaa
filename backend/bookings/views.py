@@ -1,28 +1,28 @@
-from django_filters.rest_framework import DjangoFilterBackend
+from datetime import date
+
+from django.db.models import Count, Max, Min
 from django_filters import rest_framework as filters
-from rest_framework import viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from datetime import date
-
-from django.db.models import Count, Max, Min
+from accounts.models import User
+from utils.backup import get_backup_stats
+from utils.email import send_claim_confirmation
+from utils.permissions import IsAdmin
+from vehicles.models import Vehicle
 
 from .models import Claim
 from .serializers import (
-    ClaimSerializer,
     ClaimCreateSerializer,
+    ClaimSerializer,
     OperationsClaimSerializer,
     OperationsClientSerializer,
-    OperationsVehicleSerializer,
     OperationsStaffSerializer,
+    OperationsVehicleSerializer,
 )
-from accounts.models import User
-from vehicles.models import Vehicle
-from utils.backup import get_backup_stats
-from utils.permissions import IsAdmin
-from utils.email import send_claim_confirmation
 
 
 class ClaimFilter(filters.FilterSet):

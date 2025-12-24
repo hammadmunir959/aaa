@@ -5,6 +5,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from utils.permissions import IsAdmin, IsPublicOrAdmin
+
 from .models import CarListing, CarPurchaseRequest, CarSellRequest
 from .serializers import (
     CarImageSerializer,
@@ -15,7 +17,6 @@ from .serializers import (
     CarSellRequestCreateSerializer,
     CarSellRequestSerializer,
 )
-from utils.permissions import IsAdmin, IsPublicOrAdmin
 
 
 class CarListingFilter(filters.FilterSet):

@@ -4,6 +4,7 @@ Usage: python manage.py create_test_notification --user <email>
 """
 
 from django.core.management.base import BaseCommand
+
 from accounts.models import User
 from analytics.notification_service import create_notification
 

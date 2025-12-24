@@ -1,25 +1,27 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.http import require_http_methods
+import logging
+
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
+from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.decorators import (
     api_view,
-    permission_classes,
     authentication_classes,
+    permission_classes,
 )
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from drf_spectacular.utils import extend_schema
+
 from config.themes import THEMES
-from theming.services.theme_resolver import get_active_theme
-from theming.models import Theme, Event
+from theming.models import Event, Theme
 from theming.serializers import (
-    ThemeModelSerializer,
-    ThemeDetailSerializer,
     EventModelSerializer,
+    ThemeDetailSerializer,
+    ThemeModelSerializer,
 )
-import logging
+from theming.services.theme_resolver import get_active_theme
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +43,8 @@ def _is_admin_user(user):
 
 def _authenticate_request(request):
     """Authenticate request and return user"""
-    from rest_framework_simplejwt.authentication import JWTAuthentication
     from rest_framework.authentication import SessionAuthentication
+    from rest_framework_simplejwt.authentication import JWTAuthentication
 
     user = None
     auth_header = request.headers.get("Authorization", "")
@@ -150,11 +152,12 @@ def preview_theme(request):
 @permission_classes([AllowAny])  # We'll check auth manually
 def preview_theme_api(request):
     """API endpoint to set preview theme for admin users."""
+    import logging
+
     from rest_framework import status
+    from rest_framework.authentication import SessionAuthentication
     from rest_framework.response import Response
     from rest_framework_simplejwt.authentication import JWTAuthentication
-    from rest_framework.authentication import SessionAuthentication
-    import logging
 
     logger = logging.getLogger(__name__)
 

@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
 from django.core.cache import cache
+from django.core.management.base import BaseCommand
+
 from theming.services.theme_resolver import (
-    get_active_theme,
-    get_active_event,
     _today_local_date,
+    get_active_event,
+    get_active_theme,
 )
 
 

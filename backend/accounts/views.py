@@ -1,6 +1,6 @@
-from datetime import timedelta
 import random
 import string
+from datetime import timedelta
 
 from django.contrib.auth import authenticate
 from django.db import transaction
@@ -13,18 +13,19 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, OTPVerification
+from utils.email import notify_super_admin_of_admin_request, send_otp_email
+from utils.permissions import IsSuperAdmin
+from utils.response import error_response, success_response
+from utils.security_logging import SecurityAuditLogger
+
+from .models import OTPVerification, User
 from .serializers import (
-    AdminRegistrationSerializer,
     AdminLoginSerializer,
+    AdminRegistrationSerializer,
     OTPVerificationSerializer,
     PasswordResetSerializer,
     UserSerializer,
 )
-from utils.email import send_otp_email, notify_super_admin_of_admin_request
-from utils.permissions import IsSuperAdmin
-from utils.response import success_response, error_response
-from utils.security_logging import SecurityAuditLogger
 
 
 def _generate_otp(length: int = 6) -> str:

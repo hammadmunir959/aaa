@@ -4,6 +4,7 @@ Sentry configuration for error tracking.
 
 import logging
 from typing import Optional
+
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -14,10 +15,10 @@ SENTRY_DSN = getattr(settings, "SENTRY_DSN", None)
 if SENTRY_DSN:
     try:
         import sentry_sdk
-        from sentry_sdk.integrations.django import DjangoIntegration
         from sentry_sdk.integrations.celery import CeleryIntegration
-        from sentry_sdk.integrations.redis import RedisIntegration
+        from sentry_sdk.integrations.django import DjangoIntegration
         from sentry_sdk.integrations.logging import LoggingIntegration
+        from sentry_sdk.integrations.redis import RedisIntegration
 
         sentry_sdk.init(
             dsn=SENTRY_DSN,

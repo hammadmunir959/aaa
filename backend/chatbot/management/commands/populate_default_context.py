@@ -4,6 +4,7 @@ This command creates default context entries for all sections that can be modifi
 """
 
 from django.core.management.base import BaseCommand
+
 from chatbot.models import ChatbotContext
 
 

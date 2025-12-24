@@ -1,9 +1,10 @@
 import logging
 import time
 import uuid
-from django.utils.deprecation import MiddlewareMixin
-from django.http import HttpResponse
+
 from django.conf import settings
+from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
 
 
 class RequestIDMiddleware(MiddlewareMixin):
@@ -211,6 +212,7 @@ class ForceJSONResponseMiddleware(MiddlewareMixin):
         # If response is HTML and this is an API/auth endpoint, convert to JSON error
         if "text/html" in content_type:
             import json
+
             from django.http import JsonResponse
 
             # Create a JSON error response

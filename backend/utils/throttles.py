@@ -3,9 +3,9 @@ Custom throttling classes for per-endpoint rate limiting.
 """
 
 from rest_framework.throttling import (
-    UserRateThrottle,
     AnonRateThrottle,
     SimpleRateThrottle,
+    UserRateThrottle,
 )
 
 

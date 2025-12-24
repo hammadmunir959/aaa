@@ -4,6 +4,7 @@ Converts /admin/dashboard/cms/inquiries to /admin/dashboard/inquiries/messages
 """
 
 from django.core.management.base import BaseCommand
+
 from analytics.models import ActivityLog
 
 

@@ -1,8 +1,9 @@
-from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
-from .models import User, OTPVerification
+from rest_framework import serializers
+
+from .models import OTPVerification, User
 
 
 class AdminRegistrationSerializer(serializers.Serializer):

@@ -1,13 +1,15 @@
+from datetime import date, timedelta
+
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.test import Client
-from django.contrib.auth import get_user_model
 from django.urls import reverse
-from datetime import date, timedelta
+
 from theming.models import Event
 from theming.services.theme_resolver import (
-    get_active_theme,
-    get_active_event,
     _today_local_date,
+    get_active_event,
+    get_active_theme,
 )
 
 User = get_user_model()

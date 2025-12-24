@@ -3,9 +3,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
 
+from utils.permissions import IsAdmin, IsPublicOrAdmin
+
 from .models import GalleryImage
 from .serializers import GalleryImageSerializer
-from utils.permissions import IsAdmin, IsPublicOrAdmin
 
 
 class GalleryImageFilter(filters.FilterSet):

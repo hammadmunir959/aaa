@@ -1,7 +1,8 @@
-from rest_framework.throttling import BaseThrottle
+from datetime import timedelta
+
 from django.core.cache import cache
 from django.utils import timezone
-from datetime import timedelta
+from rest_framework.throttling import BaseThrottle
 
 
 class TestimonialSubmissionThrottle(BaseThrottle):

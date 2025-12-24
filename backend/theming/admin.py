@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import path
 from django.shortcuts import redirect
+from django.urls import path, reverse
 from django.utils.html import format_html
-from django.urls import reverse
+
 from theming.models import Event, Theme
 from theming.views import theme_selector
 

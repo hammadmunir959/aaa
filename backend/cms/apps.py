@@ -6,7 +6,8 @@ class CmsConfig(AppConfig):
     name = "cms"
 
     def ready(self):
-        from django.db.models.signals import post_save, post_delete
+        from django.db.models.signals import post_delete, post_save
+
         from utils.cache_invalidation import invalidate_cms_cache
 
         # dynamic import to avoid AppRegistryNotReady

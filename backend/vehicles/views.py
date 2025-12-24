@@ -1,13 +1,14 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
-from rest_framework import viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Vehicle
-from .serializers import VehicleSerializer, VehicleCreateSerializer
-from utils.permissions import IsAdmin, IsPublicOrAdmin
 from utils.cache_decorators import cache_api_response
+from utils.permissions import IsAdmin, IsPublicOrAdmin
+
+from .models import Vehicle
+from .serializers import VehicleCreateSerializer, VehicleSerializer
 
 
 class VehicleFilter(filters.FilterSet):

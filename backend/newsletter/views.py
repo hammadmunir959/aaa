@@ -1,27 +1,29 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import api_view, action, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from django.core.mail import (
-    send_mass_mail,
-    send_mail,
-    EmailMultiAlternatives,
-    get_connection,
-)
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.utils.html import strip_tags
-from django.utils import timezone
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.db.models import F
-from django.core.signing import TimestampSigner
 import re
 
-from .models import NewsletterSubscriber, NewsletterCampaign, NewsletterRecipient
-from .serializers import NewsletterSubscriberSerializer, NewsletterCampaignSerializer
+from django.conf import settings
+from django.core.mail import (
+    EmailMultiAlternatives,
+    get_connection,
+    send_mail,
+    send_mass_mail,
+)
+from django.core.signing import TimestampSigner
+from django.db.models import F
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import strip_tags
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from utils.permissions import IsAdmin
+
+from .models import NewsletterCampaign, NewsletterRecipient, NewsletterSubscriber
+from .serializers import NewsletterCampaignSerializer, NewsletterSubscriberSerializer
 
 
 @api_view(["POST"])

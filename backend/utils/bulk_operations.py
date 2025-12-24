@@ -2,7 +2,8 @@
 Bulk operations utilities for efficient batch processing.
 """
 
-from typing import List, TypeVar, Type, Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Type, TypeVar
+
 from django.db import models, transaction
 from django.db.models import QuerySet
 

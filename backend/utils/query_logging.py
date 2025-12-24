@@ -5,6 +5,7 @@ Database query logging utilities for development and debugging.
 import logging
 import time
 from typing import Any, Dict, List
+
 from django.conf import settings
 from django.db import connection
 from django.utils.deprecation import MiddlewareMixin

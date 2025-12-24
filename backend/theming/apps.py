@@ -6,13 +6,13 @@ class ThemingConfig(AppConfig):
     name = "theming"
 
     def ready(self):
-        import theming.signals  # noqa
+        from django.db.models.signals import post_delete, post_save
 
-        from django.db.models.signals import post_save, post_delete
+        import theming.signals  # noqa
         from utils.cache_invalidation import invalidate_theming_cache
 
         try:
-            from .models import Theme, Event
+            from .models import Event, Theme
 
             # Register signals
             for model in [Theme, Event]:

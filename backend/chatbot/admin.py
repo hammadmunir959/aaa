@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import ChatbotContext, Conversation, ConversationMessage, ChatbotSettings
+
+from .models import ChatbotContext, ChatbotSettings, Conversation, ConversationMessage
 
 
 @admin.register(ChatbotContext)

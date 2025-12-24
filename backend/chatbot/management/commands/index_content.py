@@ -5,6 +5,7 @@ Run this to populate/update the content index with all current website data.
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import models
+
 from chatbot.services import ContentIndexer
 
 

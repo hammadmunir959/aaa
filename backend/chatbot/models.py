@@ -1,8 +1,9 @@
-from django.db import models
+import uuid
+
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils import timezone
-import uuid
 
 
 class ChatbotContext(models.Model):
@@ -127,8 +128,9 @@ class Conversation(models.Model):
         Check if conversation should be auto-completed based on inactivity.
         Complete conversations after 2 minutes of inactivity to improve UX and reduce polling.
         """
-        from django.utils import timezone
         from datetime import timedelta
+
+        from django.utils import timezone
 
         # Already completed
         if self.status == "completed":

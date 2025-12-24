@@ -4,15 +4,16 @@ Ensures chatbot always has access to current information.
 """
 
 import logging
-from django.db.models.signals import post_save, post_delete
+
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
 from .models import ContentIndex
 from .services import (
     ContentIndexer,
-    invalidate_context_sections_cache,
     invalidate_content_search_cache,
+    invalidate_context_sections_cache,
 )
 
 logger = logging.getLogger(__name__)

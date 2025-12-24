@@ -1,14 +1,15 @@
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from utils.cache_decorators import cache_api_response
+from utils.permissions import IsAdmin, IsPublicOrAdmin
+from utils.throttles import SafeAnonRateThrottle, SafeUserRateThrottle
 
 from .models import Testimonial
-from .serializers import TestimonialSerializer, TestimonialCreateSerializer
+from .serializers import TestimonialCreateSerializer, TestimonialSerializer
 from .throttles import TestimonialSubmissionThrottle
-from utils.permissions import IsAdmin, IsPublicOrAdmin
-from utils.cache_decorators import cache_api_response
-from utils.throttles import SafeAnonRateThrottle, SafeUserRateThrottle
 
 
 class TestimonialViewSet(viewsets.ModelViewSet):

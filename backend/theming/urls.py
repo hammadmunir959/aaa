@@ -1,4 +1,5 @@
 from django.urls import path
+
 from theming import views
 
 app_name = "theming"

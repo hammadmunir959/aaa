@@ -2,9 +2,10 @@
 Enhanced pagination classes for optimized API responses.
 """
 
-from rest_framework.pagination import PageNumberPagination, CursorPagination
-from rest_framework.response import Response
 from typing import Any, Dict
+
+from rest_framework.pagination import CursorPagination, PageNumberPagination
+from rest_framework.response import Response
 
 
 class CustomPagination(PageNumberPagination):

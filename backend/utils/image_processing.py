@@ -3,12 +3,13 @@ Image processing utilities for optimization and thumbnail generation.
 """
 
 import os
+import sys
 from io import BytesIO
 from typing import Optional, Tuple
-from PIL import Image
-from django.core.files.uploadedfile import InMemoryUploadedFile
+
 from django.core.files.base import ContentFile
-import sys
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from PIL import Image
 
 
 def optimize_image(

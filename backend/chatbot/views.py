@@ -1,32 +1,34 @@
+from datetime import timedelta
 from typing import Optional
-from rest_framework import viewsets, status
-from rest_framework.decorators import api_view, action, permission_classes
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django_filters.rest_framework import DjangoFilterBackend
-from django.utils import timezone
+
 from django.conf import settings
 from django.db.models import Count, Prefetch
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from datetime import timedelta
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
-from .models import Conversation, ConversationMessage, ChatbotContext, ChatbotSettings
+from utils.permissions import IsAdmin
+
+from .models import ChatbotContext, ChatbotSettings, Conversation, ConversationMessage
 from .serializers import (
+    ChatbotContextSerializer,
+    ChatbotSettingsSerializer,
     ConversationDetailSerializer,
     ConversationListSerializer,
     ConversationMessageSerializer,
-    ChatbotContextSerializer,
-    ChatbotSettingsSerializer,
 )
-from utils.permissions import IsAdmin
-from .tasks import generate_chatbot_response_task
 from .services import (
-    invalidate_context_sections_cache,
-    invalidate_content_search_cache,
     SimpleChatbotService,
+    invalidate_content_search_cache,
+    invalidate_context_sections_cache,
 )
+from .tasks import generate_chatbot_response_task
 
 MAX_CONVERSATION_MESSAGES = 200
 DEFAULT_CONVERSATION_MESSAGES = 50
@@ -229,9 +231,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
         )
 
 
-from django.views.decorators.csrf import csrf_exempt
-
 from asgiref.sync import sync_to_async
+from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
@@ -244,8 +245,9 @@ def chatbot_message(request):
     Wraps async logic in a synchronous view using async_to_sync to ensure
     compatibility with DRF @api_view decorator and WSGI/ASGI environments.
     """
-    from asgiref.sync import async_to_sync
     import asyncio
+
+    from asgiref.sync import async_to_sync
 
     # Extract data in sync context
     data = request.data

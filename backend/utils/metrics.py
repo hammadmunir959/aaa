@@ -2,12 +2,13 @@
 Metrics collection utilities for monitoring.
 """
 
-from typing import Dict, Any, Optional
-from django.core.cache import cache
-from django.db import connection
-from django.conf import settings
 import time
 from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
+
+from django.conf import settings
+from django.core.cache import cache
+from django.db import connection
 
 
 class MetricsCollector:
@@ -104,8 +105,9 @@ class MetricsCollector:
             Dictionary with system metrics
         """
         try:
-            import psutil
             import os
+
+            import psutil
 
             process = psutil.Process(os.getpid())
 

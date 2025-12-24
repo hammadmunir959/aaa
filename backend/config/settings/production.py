@@ -1,5 +1,6 @@
-from .base import *
 import os
+
+from .base import *
 
 # Production-specific settings
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"

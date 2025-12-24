@@ -2,7 +2,6 @@ from django.core.cache import cache
 
 from utils.cache import get_cache_key
 
-
 DASHBOARD_SUMMARY_CACHE_PREFIX = "dashboard_summary"
 BOOKING_TRENDS_CACHE_PREFIX = "booking_trends"
 

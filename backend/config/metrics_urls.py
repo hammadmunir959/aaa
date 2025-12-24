@@ -3,8 +3,9 @@ URLs for metrics and monitoring endpoints.
 """
 
 from django.urls import path
-from config.views import health_check, readiness_check, liveness_check
+
 from config.metrics_views import metrics_view
+from config.views import health_check, liveness_check, readiness_check
 
 app_name = "metrics"
 

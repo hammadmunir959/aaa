@@ -6,7 +6,7 @@ Extracted from the monolithic services.py file for better maintainability.
 """
 
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.cache import cache

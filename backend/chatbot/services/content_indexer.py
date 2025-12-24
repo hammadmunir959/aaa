@@ -6,7 +6,7 @@ Extracted from the monolithic services.py file for better maintainability.
 """
 
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 from django.utils import timezone
 
